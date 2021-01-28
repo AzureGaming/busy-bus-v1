@@ -28,12 +28,12 @@ public class LevelManager : MonoBehaviour {
     bool isRushHour;
 
     private void OnEnable() {
-        OnMiss += MissEvent;
+        OnMiss += FailEvent;
         OnComplete += CompleteEvent;
     }
 
     private void OnDisable() {
-        OnMiss -= MissEvent;
+        OnMiss -= FailEvent;
         OnComplete -= CompleteEvent;
     }
 
@@ -53,14 +53,15 @@ public class LevelManager : MonoBehaviour {
         StartCoroutine(StartDay());
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
-        //keyPrompts.Init();
-        checkFare.Init();
+        keyPrompts.Init();
+        //checkFare.Init();
         GameManager.OnShowBusOverlay?.Invoke();
     }
 
     void LoseDay() {
         keyPrompts.Stop();
         checkFare.Stop();
+        ScoreRating.OnUpdateScore?.Invoke(scoreToday);
         GameManager.OnShowLoseScreen?.Invoke();
     }
 
@@ -70,23 +71,20 @@ public class LevelManager : MonoBehaviour {
         GameManager.OnShowResults?.Invoke();
     }
 
-    void MissEvent() {
-        if (misses < MAX_MISSES) {
-            if (scoreToday > 0) {
-                scoreToday--;
-                ScoreRating.OnScoreDecrease?.Invoke();
-            }
-            misses++;
-            Misses.OnUpdate?.Invoke(misses);
-        } else {
-            LoseDay();
-        }
+    void FailEvent() {
+        //if (scoreToday > 0) {
+        //    scoreToday--;
+        //    ScoreRating.OnUpdateScore?.Invoke(scoreToday);
+        //} else {
+        //    LoseDay();
+        //}
+        //Misses.OnUpdate?.Invoke(misses);
     }
 
     void CompleteEvent() {
         if (scoreToday < MAX_RATING) {
             scoreToday++;
-            ScoreRating.OnScoreIncrease?.Invoke();
+            ScoreRating.OnUpdateScore?.Invoke(scoreToday);
         }
     }
 

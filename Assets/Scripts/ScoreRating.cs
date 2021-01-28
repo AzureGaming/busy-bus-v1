@@ -3,27 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ScoreRating : MonoBehaviour {
-    public delegate void ScoreIncrease();
-    public static ScoreIncrease OnScoreIncrease;
-    public delegate void ScoreDecrease();
-    public static ScoreDecrease OnScoreDecrease;
-    public GameObject starPrefab;
+    public delegate void UpdateScore(int score);
+    public static UpdateScore OnUpdateScore;
+
+    int MAX_SCORE = 100;
+
+    Score score;
+    Stars stars;
+
+    private void Awake() {
+        score = GetComponentInChildren<Score>();
+        stars = GetComponentInChildren<Stars>();
+    }
 
     private void OnEnable() {
-        OnScoreIncrease += RenderStar;
-        OnScoreDecrease += DestroyStar;
+        OnUpdateScore += HandleUpdate;
     }
 
     private void OnDisable() {
-        OnScoreIncrease -= RenderStar;
-        OnScoreDecrease -= DestroyStar;
+        OnUpdateScore -= HandleUpdate;
     }
 
-    void RenderStar() {
-        Instantiate(starPrefab, transform);
-    }
-
-    void DestroyStar() {
-        Destroy(transform.GetChild(transform.childCount - 1).gameObject);
+    void HandleUpdate(int value) {
+        score.SetValue(value);
+        stars.ClearStars();
+        int iterations = (int)Mathf.Round(value);
+        Debug.Log(iterations);
+        for (int i = 0; i < iterations; i++) {
+            stars.RenderStar();
+        }
     }
 }
