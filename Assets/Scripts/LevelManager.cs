@@ -16,8 +16,8 @@ public class LevelManager : MonoBehaviour {
     readonly int MAX_MISSES = 5;
     readonly int MAX_RATING = 5;
     readonly int START_HOUR = 8;
-    readonly int HOURS_IN_DAY = 17; // 00:00 - 17:00
-    readonly int DAY_IN_REAL_MINUTES = 1;
+    readonly int HOURS_IN_DAY = 20; // 00:00 - 20:00
+    readonly int DAY_IN_REAL_MINUTES = 2;
 
     int misses;
     int scoreToday;
@@ -25,6 +25,7 @@ public class LevelManager : MonoBehaviour {
     float timeElapsed;
     int currentHour;
     float gameHoursPerSecond;
+    bool isRushHour;
 
     private void OnEnable() {
         OnMiss += MissEvent;
@@ -40,11 +41,18 @@ public class LevelManager : MonoBehaviour {
         LoadDay();
     }
 
+    public float GetTimeElapsed() {
+        Debug.Log("Time elapsed: " + timeElapsed);
+        return timeElapsed;
+    }
+
     public void LoadDay() {
         misses = 0;
         scoreToday = 0;
+        isRushHour = false;
         InitTimer(DAY_IN_REAL_MINUTES, HOURS_IN_DAY);
         StartCoroutine(StartDay());
+        StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
         keyPrompts.Init();
         //checkFare.Init();
@@ -105,6 +113,23 @@ public class LevelManager : MonoBehaviour {
             OnHourChange?.Invoke(currentHour);
             currentHour++;
             yield return new WaitForSeconds(gameHoursPerSecond);
+        }
+    }
+
+    IEnumerator RushHour() {
+        while (timeElapsed <= targetTime) {
+            if (currentHour == 9) {
+                KeyPrompts.OnRushHourStart?.Invoke();
+                yield return new WaitUntil(() => currentHour == 11);
+                KeyPrompts.OnRushHourEnd?.Invoke();
+            }
+
+            if (currentHour == 16) {
+                KeyPrompts.OnRushHourStart?.Invoke();
+                yield return new WaitUntil(() => currentHour == 18);
+                KeyPrompts.OnRushHourEnd?.Invoke();
+            }
+            yield return null;
         }
     }
 }

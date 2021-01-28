@@ -1222,6 +1222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e567c6ecec549a6428327b7ba1033063, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelManager: {fileID: 1237218829}
 --- !u!114 &1237218831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1234,6 +1235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49f47830429cb5344b9d4653702c4807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelManager: {fileID: 0}
   coinPrefab: {fileID: 1985922992663497098, guid: bceef27ace9e2a1439fa519c0d35adae, type: 3}
   fareSpawn: {fileID: 621168954}
   acceptButton: {fileID: 1142688725}

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class BusEvent : MonoBehaviour {
-    Coroutine initRoutine;
+    public LevelManager levelManager;
 
+    Coroutine initRoutine;
     float nextTime;
 
     public void Init() {
@@ -52,9 +53,7 @@ public abstract class BusEvent : MonoBehaviour {
     void LoadNextTime() {
         float initialValue = 0.1f;
         float rate = 0.1f;
-        float time = Time.time;
-        nextTime = initialValue * Mathf.Pow((1 + rate), time);
-        Debug.Log("Time: " + time);
+        nextTime = initialValue * Mathf.Pow((1 + rate), levelManager.GetTimeElapsed());
         Debug.Log("Next Time: " + nextTime);
     }
 }

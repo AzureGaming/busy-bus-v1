@@ -3,37 +3,78 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class KeyPrompts : BusEvent {
+public class KeyPrompts : MonoBehaviour {
+    public LevelManager levelManager;
+    public delegate void RushHourStart();
+    public static RushHourStart OnRushHourStart;
+    public delegate void RushHourEnd();
+    public static RushHourEnd OnRushHourEnd;
+    //public delegate void InitEvent();
+    //public static InitEvent OnInitEvent;
+
     KeyCode expectedKey;
     KeyCode[] promptKeys;
-    Coroutine waitRoutine;
-    bool stopListening;
+    Coroutine eventRoutine;
+    Coroutine timeoutRoutine;
+    float nextTime;
+    bool isRushHour;
+    bool timesUp;
 
     private void Awake() {
-        promptKeys = new KeyCode[2] { KeyCode.D, KeyCode.A };
+        promptKeys = new KeyCode[4] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S };
     }
 
-    protected override void OnEvent() {
+    private void OnEnable() {
+        OnRushHourStart += StartRush;
+        OnRushHourEnd += EndRush;
+        //OnInitEvent += Init;
+    }
+
+    private void OnDisable() {
+        OnRushHourStart -= StartRush;
+        OnRushHourEnd -= EndRush;
+        //OnInitEvent -= Init;
+    }
+
+    public void Init() {
+        eventRoutine = StartCoroutine(EventRoutine());
+    }
+
+    public void Stop() {
+        StopCoroutine(eventRoutine);
+        OnEventStop();
+    }
+
+    IEnumerator EventRoutine() {
+        for (; ; ) {
+            OnEvent();
+            timeoutRoutine = StartCoroutine(Timeout());
+            yield return StartCoroutine(EventListener());
+            OnEventComplete();
+            LoadNextTime();
+            yield return new WaitForSeconds(nextTime);
+        }
+    }
+
+    void OnEvent() {
         int randomIndex = Random.Range(0, promptKeys.Length);
         expectedKey = promptKeys[randomIndex];
         DrivingPrompt.OnRender?.Invoke(expectedKey.ToString());
-        stopListening = false;
-        waitRoutine = StartCoroutine(Wait());
     }
 
-    protected override void OnEventComplete() {
-        StopCoroutine(waitRoutine);
+    void OnEventComplete() {
+        StopCoroutine(timeoutRoutine);
         DrivingPrompt.OnHide?.Invoke();
     }
 
-    protected override IEnumerator EventListener() {
+    IEnumerator EventListener() {
         yield return new WaitUntil(() => {
             string input = Input.inputString;
             if (input == expectedKey.ToString().ToLower()) {
                 LevelManager.OnComplete?.Invoke();
                 return true;
             }
-            if (input.Length > 0 || stopListening) {
+            if (input.Length > 0 || timesUp) {
                 LevelManager.OnMiss?.Invoke();
                 return true;
             }
@@ -41,16 +82,34 @@ public class KeyPrompts : BusEvent {
         });
     }
 
-    protected override IEnumerator StartTimer() {
-        yield return new WaitForSeconds(1f);
+    IEnumerator Timeout() {
+        timesUp = false;
+        if (isRushHour) {
+            yield return new WaitForSeconds(0.5f);
+        } else {
+            yield return new WaitForSeconds(3f);
+        }
+        timesUp = true;
     }
 
-    protected override void OnEventStop() {
+    void OnEventStop() {
         OnEventComplete();
     }
 
-    IEnumerator Wait() {
-        yield return new WaitForSeconds(10f);
-        stopListening = true;
+    void LoadNextTime() {
+        if (isRushHour) {
+            nextTime = Random.Range(0.1f, 0.5f);
+        } else {
+            nextTime = Random.Range(3f, 5f);
+        }
+        Debug.Log("Next Time: " + nextTime);
+    }
+
+    void StartRush() {
+        isRushHour = true;
+    }
+
+    void EndRush() {
+        isRushHour = false;
     }
 }
