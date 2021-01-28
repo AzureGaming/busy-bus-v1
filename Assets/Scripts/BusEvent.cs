@@ -5,6 +5,8 @@ using UnityEngine;
 public abstract class BusEvent : MonoBehaviour {
     Coroutine initRoutine;
 
+    float nextTime;
+
     public void Init() {
         initRoutine = StartCoroutine(EventRoutine());
     }
@@ -19,7 +21,9 @@ public abstract class BusEvent : MonoBehaviour {
             OnEvent();
             yield return StartCoroutine(EventListener());
             OnEventComplete();
-            yield return StartCoroutine(StartTimer());
+            LoadNextTime();
+            yield return new WaitForSeconds(nextTime);
+            //yield return StartCoroutine(StartTimer());
         }
     }
 
@@ -43,5 +47,14 @@ public abstract class BusEvent : MonoBehaviour {
 
     protected virtual void OnEventStop() {
         // ...
+    }
+
+    void LoadNextTime() {
+        float initialValue = 0.1f;
+        float rate = 0.1f;
+        float time = Time.time;
+        nextTime = initialValue * Mathf.Pow((1 + rate), time);
+        Debug.Log("Time: " + time);
+        Debug.Log("Next Time: " + nextTime);
     }
 }

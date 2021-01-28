@@ -16,9 +16,15 @@ public class LevelManager : MonoBehaviour {
     readonly int MAX_MISSES = 5;
     readonly int MAX_RATING = 5;
     readonly int START_HOUR = 8;
+    readonly int HOURS_IN_DAY = 17; // 00:00 - 17:00
+    readonly int DAY_IN_REAL_MINUTES = 1;
 
     int misses;
     int scoreToday;
+    float targetTime;
+    float timeElapsed;
+    int currentHour;
+    float gameHoursPerSecond;
 
     private void OnEnable() {
         OnMiss += MissEvent;
@@ -31,16 +37,17 @@ public class LevelManager : MonoBehaviour {
     }
 
     private void Start() {
-        LoadDay();    
+        LoadDay();
     }
 
     public void LoadDay() {
         misses = 0;
         scoreToday = 0;
-
-        StartCoroutine(StartTimer());
+        InitTimer(DAY_IN_REAL_MINUTES, HOURS_IN_DAY);
+        StartCoroutine(StartDay());
+        StartCoroutine(UpdateHour());
         keyPrompts.Init();
-        checkFare.Init();
+        //checkFare.Init();
         GameManager.OnShowBusOverlay?.Invoke();
     }
 
@@ -76,35 +83,28 @@ public class LevelManager : MonoBehaviour {
         }
     }
 
-    IEnumerator StartTimer() {
-        // todo: make calculation automatic
-        int HOUR_PER_SECOND = 5;
-        float targetTime = 45; // 5 seconds each hour, 9 hours a day 5*9 = 45
-        int timeElapsed = 0; // seconds
-        int currentHour = START_HOUR;
-        int lastTime = -1;
-
-        OnHourChange?.Invoke(currentHour);
-
-        for (; ; ) {
-            targetTime -= Time.deltaTime;
-            timeElapsed = (int)targetTime % 60;
-            //Debug.Log("Time elapsed: " + timeElapsed + ". Last time: " + lastTime);
-
-            if (timeElapsed % HOUR_PER_SECOND == 0 && lastTime != timeElapsed) {
-                lastTime = timeElapsed;
-                currentHour++;
-                OnHourChange?.Invoke(currentHour);
-            }
-
-            if (targetTime <= 0) {
-                OnHourChange?.Invoke(currentHour);
-                CompleteDay();
-                Debug.Log("Day ends");
-                yield break;
-            }
-
+    IEnumerator StartDay() {
+        while (timeElapsed <= targetTime) {
+            timeElapsed += Time.deltaTime;
             yield return null;
+        }
+        CompleteDay();
+    }
+
+    void InitTimer(float totalRealMinutes, int totalGameHours) {
+        targetTime = 60 * totalRealMinutes; // convert to seconds
+        timeElapsed = 0;
+        currentHour = START_HOUR;
+        gameHoursPerSecond = targetTime / totalGameHours;
+        Debug.Log("Init Timer");
+        Debug.Log("Target time: " + targetTime + " Game hours per second: " + gameHoursPerSecond);
+    }
+
+    IEnumerator UpdateHour() {
+        while (timeElapsed <= targetTime) {
+            OnHourChange?.Invoke(currentHour);
+            currentHour++;
+            yield return new WaitForSeconds(gameHoursPerSecond);
         }
     }
 }
