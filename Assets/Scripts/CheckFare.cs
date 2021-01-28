@@ -4,20 +4,33 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CheckFare : BusEvent {
+
     public GameObject coinPrefab;
     public GameObject fareSpawn;
     public Button acceptButton;
     public Button rejectButton;
 
-    Coroutine waitRoutine;
+    Coroutine timeoutRoutine;
+    Coroutine eventRoutine;
     int postedFare = 5;
     int farePaid;
     bool hasResponded;
-    bool stopListening;
+    bool timesUp;
+    float nextTime;
 
     private void Start() {
         acceptButton.onClick.AddListener(OnClick);
         rejectButton.onClick.AddListener(OnClick);
+    }
+
+    public void Init() {
+        eventRoutine = StartCoroutine(EventRoutine());
+    }
+
+    public void Stop() {
+        StopCoroutine(eventRoutine);
+        StopCoroutine(timeoutRoutine);
+        ClearFare();
     }
 
     public void Accept() {
@@ -38,23 +51,52 @@ public class CheckFare : BusEvent {
         ClearFare();
     }
 
-    protected override void OnEvent() {
+    IEnumerator EventRoutine() {
+        for (; ; ) {
+            Prompt();
+            timeoutRoutine = StartCoroutine(Timeout());
+            yield return StartCoroutine(Listen());
+            Complete();
+            LoadNextTime();
+            yield return new WaitForSeconds(nextTime);
+        }
+    }
+
+    void Prompt() {
         BusOverlay.OnShowFare?.Invoke();
         hasResponded = false;
         LoadFare();
-        waitRoutine = StartCoroutine(Wait());
     }
 
-    protected override void OnEventComplete() {
-        StopCoroutine(waitRoutine);
+    IEnumerator Timeout() {
+        timesUp = false;
+        if (isRushHour) {
+            yield return new WaitForSeconds(0.5f);
+        } else {
+            yield return new WaitForSeconds(3f);
+        }
+        timesUp = true;
+    }
+
+    void Complete() {
+        StopCoroutine(timeoutRoutine);
         BusOverlay.OnHideFare?.Invoke();
     }
 
-    protected override IEnumerator EventListener() {
+    void LoadNextTime() {
+        if (isRushHour) {
+            nextTime = Random.Range(0.1f, 0.5f);
+        } else {
+            nextTime = Random.Range(3f, 5f);
+        }
+        Debug.Log("Next Check Fare: " + nextTime);
+    }
+
+    IEnumerator Listen() {
         yield return new WaitUntil(() => {
             if (hasResponded) {
                 return true;
-            } else if (stopListening) {
+            } else if (timesUp) {
                 LevelManager.OnMiss?.Invoke();
                 return true;
             }
@@ -78,18 +120,5 @@ public class CheckFare : BusEvent {
         foreach (Transform child in fareSpawn.transform) {
             Destroy(child.gameObject);
         }
-    }
-
-    protected override IEnumerator StartTimer() {
-        yield return new WaitForSeconds(2f);
-    }
-
-    protected override void OnEventStop() {
-        ClearFare();
-    }
-
-    IEnumerator Wait() {
-        yield return new WaitForSeconds(10f);
-        stopListening = true;
     }
 }

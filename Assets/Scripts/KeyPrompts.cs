@@ -3,37 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class KeyPrompts : MonoBehaviour {
-    public LevelManager levelManager;
-    public delegate void RushHourStart();
-    public static RushHourStart OnRushHourStart;
-    public delegate void RushHourEnd();
-    public static RushHourEnd OnRushHourEnd;
-    //public delegate void InitEvent();
-    //public static InitEvent OnInitEvent;
-
+public class KeyPrompts : BusEvent {
     KeyCode expectedKey;
     KeyCode[] promptKeys;
     Coroutine eventRoutine;
     Coroutine timeoutRoutine;
     float nextTime;
-    bool isRushHour;
     bool timesUp;
 
     private void Awake() {
         promptKeys = new KeyCode[4] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S };
-    }
-
-    private void OnEnable() {
-        OnRushHourStart += StartRush;
-        OnRushHourEnd += EndRush;
-        //OnInitEvent += Init;
-    }
-
-    private void OnDisable() {
-        OnRushHourStart -= StartRush;
-        OnRushHourEnd -= EndRush;
-        //OnInitEvent -= Init;
     }
 
     public void Init() {
@@ -42,32 +21,33 @@ public class KeyPrompts : MonoBehaviour {
 
     public void Stop() {
         StopCoroutine(eventRoutine);
-        OnEventStop();
+        StopCoroutine(timeoutRoutine);
+        DrivingPrompt.OnHide?.Invoke();
     }
 
     IEnumerator EventRoutine() {
         for (; ; ) {
-            OnEvent();
+            Prompt();
             timeoutRoutine = StartCoroutine(Timeout());
-            yield return StartCoroutine(EventListener());
-            OnEventComplete();
+            yield return StartCoroutine(Listen());
+            Complete();
             LoadNextTime();
             yield return new WaitForSeconds(nextTime);
         }
     }
 
-    void OnEvent() {
+    void Prompt() {
         int randomIndex = Random.Range(0, promptKeys.Length);
         expectedKey = promptKeys[randomIndex];
         DrivingPrompt.OnRender?.Invoke(expectedKey.ToString());
     }
 
-    void OnEventComplete() {
+    void Complete() {
         StopCoroutine(timeoutRoutine);
         DrivingPrompt.OnHide?.Invoke();
     }
 
-    IEnumerator EventListener() {
+    IEnumerator Listen() {
         yield return new WaitUntil(() => {
             string input = Input.inputString;
             if (input == expectedKey.ToString().ToLower()) {
@@ -92,24 +72,12 @@ public class KeyPrompts : MonoBehaviour {
         timesUp = true;
     }
 
-    void OnEventStop() {
-        OnEventComplete();
-    }
-
     void LoadNextTime() {
         if (isRushHour) {
             nextTime = Random.Range(0.1f, 0.5f);
         } else {
             nextTime = Random.Range(3f, 5f);
         }
-        Debug.Log("Next Time: " + nextTime);
-    }
-
-    void StartRush() {
-        isRushHour = true;
-    }
-
-    void EndRush() {
-        isRushHour = false;
+        Debug.Log("Next Key Prompt: " + nextTime);
     }
 }

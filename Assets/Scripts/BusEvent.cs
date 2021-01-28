@@ -3,57 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class BusEvent : MonoBehaviour {
-    public LevelManager levelManager;
+    public delegate void RushHourStart();
+    public static RushHourStart OnRushHourStart;
+    public delegate void RushHourEnd();
+    public static RushHourEnd OnRushHourEnd;
 
-    Coroutine initRoutine;
-    float nextTime;
+    protected bool isRushHour;
 
-    public void Init() {
-        initRoutine = StartCoroutine(EventRoutine());
+    private void OnEnable() {
+        OnRushHourStart += StartRush;
+        OnRushHourEnd += EndRush;
     }
 
-    public void Stop() {
-        StopCoroutine(initRoutine);
-        OnEventStop();
+    private void OnDisable() {
+        OnRushHourStart -= StartRush;
+        OnRushHourEnd -= EndRush;
     }
 
-    IEnumerator EventRoutine() {
-        for (; ; ) {
-            OnEvent();
-            yield return StartCoroutine(EventListener());
-            OnEventComplete();
-            LoadNextTime();
-            yield return new WaitForSeconds(nextTime);
-            //yield return StartCoroutine(StartTimer());
-        }
+    void StartRush() {
+        isRushHour = true;
     }
 
-    protected virtual IEnumerator StartTimer() {
-        // ...
-        yield return null;
-    }
-
-    protected virtual void OnEvent() {
-        // ...
-    }
-
-    protected virtual void OnEventComplete() {
-        // ...
-    }
-
-    protected virtual IEnumerator EventListener() {
-        // ...
-        yield return null;
-    }
-
-    protected virtual void OnEventStop() {
-        // ...
-    }
-
-    void LoadNextTime() {
-        float initialValue = 0.1f;
-        float rate = 0.1f;
-        nextTime = initialValue * Mathf.Pow((1 + rate), levelManager.GetTimeElapsed());
-        Debug.Log("Next Time: " + nextTime);
+    void EndRush() {
+        isRushHour = false;
     }
 }

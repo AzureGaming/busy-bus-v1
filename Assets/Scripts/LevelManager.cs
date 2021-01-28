@@ -42,7 +42,6 @@ public class LevelManager : MonoBehaviour {
     }
 
     public float GetTimeElapsed() {
-        Debug.Log("Time elapsed: " + timeElapsed);
         return timeElapsed;
     }
 
@@ -54,8 +53,8 @@ public class LevelManager : MonoBehaviour {
         StartCoroutine(StartDay());
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
-        keyPrompts.Init();
-        //checkFare.Init();
+        //keyPrompts.Init();
+        checkFare.Init();
         GameManager.OnShowBusOverlay?.Invoke();
     }
 
@@ -119,15 +118,15 @@ public class LevelManager : MonoBehaviour {
     IEnumerator RushHour() {
         while (timeElapsed <= targetTime) {
             if (currentHour == 9) {
-                KeyPrompts.OnRushHourStart?.Invoke();
+                BusEvent.OnRushHourStart?.Invoke();
                 yield return new WaitUntil(() => currentHour == 11);
-                KeyPrompts.OnRushHourEnd?.Invoke();
+                BusEvent.OnRushHourEnd?.Invoke();
             }
 
             if (currentHour == 16) {
-                KeyPrompts.OnRushHourStart?.Invoke();
+                BusEvent.OnRushHourStart?.Invoke();
                 yield return new WaitUntil(() => currentHour == 18);
-                KeyPrompts.OnRushHourEnd?.Invoke();
+                BusEvent.OnRushHourEnd?.Invoke();
             }
             yield return null;
         }
