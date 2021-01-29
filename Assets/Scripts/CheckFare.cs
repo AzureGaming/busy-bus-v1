@@ -71,9 +71,9 @@ public class CheckFare : BusEvent {
     IEnumerator Timeout() {
         timesUp = false;
         if (isRushHour) {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(5f);
         } else {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(7f);
         }
         timesUp = true;
     }
@@ -85,9 +85,9 @@ public class CheckFare : BusEvent {
 
     void LoadNextTime() {
         if (isRushHour) {
-            nextTime = Random.Range(0.1f, 0.5f);
+            nextTime = Random.Range(4f, 5f);
         } else {
-            nextTime = Random.Range(3f, 5f);
+            nextTime = Random.Range(7f, 8f);
         }
         Debug.Log("Next Check Fare: " + nextTime);
     }
