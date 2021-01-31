@@ -53,8 +53,8 @@ public class LevelManager : MonoBehaviour {
         StartCoroutine(StartDay());
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
-        keyPrompts.Init();
-        //checkFare.Init();
+        //keyPrompts.Init();
+        checkFare.Init();
         GameManager.OnShowBusOverlay?.Invoke();
     }
 
