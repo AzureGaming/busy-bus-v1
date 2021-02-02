@@ -43,6 +43,9 @@ public class KeyPrompts : BusEvent {
     }
 
     void Complete() {
+        if (expectedKey == KeyCode.S) {
+            CheckFare.OnQueueCommuters?.Invoke();
+        }
         StopCoroutine(timeoutRoutine);
         DrivingPrompt.OnHide?.Invoke();
     }

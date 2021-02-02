@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CheckFare : BusEvent {
+    public delegate void QueueCommuters();
+    public static QueueCommuters OnQueueCommuters;
+
     public GameObject fareSpawn;
     public Button acceptButton;
     public Button rejectButton;
@@ -19,6 +22,14 @@ public class CheckFare : BusEvent {
     private void Start() {
         acceptButton.onClick.AddListener(OnClick);
         rejectButton.onClick.AddListener(OnClick);
+    }
+
+    private void OnEnable() {
+        OnQueueCommuters += Init;
+    }
+
+    private void OnDisable() {
+        OnQueueCommuters -= Init;
     }
 
     public void Init() {

@@ -17,7 +17,7 @@ public class LevelManager : MonoBehaviour {
     readonly int MAX_RATING = 5;
     readonly int START_HOUR = 8;
     readonly int HOURS_IN_DAY = 20; // 00:00 - 20:00
-    readonly int DAY_IN_REAL_MINUTES = 2;
+    readonly int DAY_IN_REAL_MINUTES = 4;
 
     int misses;
     int scoreToday;
@@ -26,6 +26,7 @@ public class LevelManager : MonoBehaviour {
     int currentHour;
     float gameHoursPerSecond;
     bool isRushHour;
+    int commuterQueue;
 
     private void OnEnable() {
         OnMiss += FailEvent;
@@ -49,12 +50,12 @@ public class LevelManager : MonoBehaviour {
         misses = 0;
         scoreToday = 0;
         isRushHour = false;
+        commuterQueue = 0;
         InitTimer(DAY_IN_REAL_MINUTES, HOURS_IN_DAY);
         StartCoroutine(StartDay());
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
-        //keyPrompts.Init();
-        checkFare.Init();
+        keyPrompts.Init();
         GameManager.OnShowBusOverlay?.Invoke();
     }
 

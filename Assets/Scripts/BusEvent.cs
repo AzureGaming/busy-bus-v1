@@ -21,6 +21,7 @@ public abstract class BusEvent : MonoBehaviour {
     }
 
     void StartRush() {
+        Debug.Log("start rush");
         isRushHour = true;
     }
 
