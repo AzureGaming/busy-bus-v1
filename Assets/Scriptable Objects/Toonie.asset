@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: Penny
-  m_EditorClassIdentifier: Assembly-CSharp::CoinScriptableObject
-  value: 1
-  sprite: {fileID: 21300000, guid: 729ecab7a4e2df8418ee07f034be130d, type: 3}
+  m_Script: {fileID: 11500000, guid: ab6aa7b1bcf78de4ea8bfcc767a8985b, type: 3}
+  m_Name: Toonie
+  m_EditorClassIdentifier: 
+  value: 2
+  sprite: {fileID: 2721529785126072137, guid: c3db5bc99fa306b4b88869fa8c9b0fbc, type: 3}

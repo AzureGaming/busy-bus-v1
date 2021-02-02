@@ -5,6 +5,6 @@ using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "Coin", menuName = "ScriptableObjects/CoinScriptableObject")]
 public class CoinScriptableObject : ScriptableObject {
-    public int value;
+    public float value;
     public Sprite sprite;
 }

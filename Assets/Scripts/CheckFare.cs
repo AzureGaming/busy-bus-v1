@@ -4,16 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CheckFare : BusEvent {
-
-    public GameObject coinPrefab;
     public GameObject fareSpawn;
     public Button acceptButton;
     public Button rejectButton;
 
     Coroutine timeoutRoutine;
     Coroutine eventRoutine;
-    int postedFare = 5;
-    int farePaid;
+    float postedFare = 5;
+    float farePaid;
     bool hasResponded;
     bool timesUp;
     float nextTime;
@@ -30,7 +28,7 @@ public class CheckFare : BusEvent {
     public void Stop() {
         StopCoroutine(eventRoutine);
         StopCoroutine(timeoutRoutine);
-        ClearFare();
+        CoinSpawn.OnClearSpawn?.Invoke();
     }
 
     public void Accept() {
@@ -39,7 +37,7 @@ public class CheckFare : BusEvent {
         } else if (farePaid < postedFare) {
             LevelManager.OnMiss?.Invoke();
         }
-        ClearFare();
+        CoinSpawn.OnClearSpawn?.Invoke();
     }
 
     public void Reject() {
@@ -48,7 +46,7 @@ public class CheckFare : BusEvent {
         } else if ((farePaid < postedFare) || (farePaid >= postedFare)) {
             LevelManager.OnComplete?.Invoke();
         }
-        ClearFare();
+        CoinSpawn.OnClearSpawn?.Invoke();
     }
 
     IEnumerator EventRoutine() {
@@ -65,7 +63,7 @@ public class CheckFare : BusEvent {
     void Prompt() {
         BusOverlay.OnShowFare?.Invoke();
         hasResponded = false;
-        LoadFare();
+        CalculateFarePaid();
     }
 
     IEnumerator Timeout() {
@@ -75,6 +73,7 @@ public class CheckFare : BusEvent {
         } else {
             yield return new WaitForSeconds(7f);
         }
+        CoinSpawn.OnClearSpawn?.Invoke();
         timesUp = true;
     }
 
@@ -108,17 +107,14 @@ public class CheckFare : BusEvent {
         hasResponded = true;
     }
 
-    // todo: move to fare spawner
-    void LoadFare() {
-        farePaid = Random.Range(1, 7);
-        for (int i = 1; i <= farePaid; i++) {
-            GameObject coin = Instantiate(coinPrefab, fareSpawn.transform);
-        }
-    }
+    void CalculateFarePaid() {
+        int numOfToonies = Random.Range(0, 2);
+        int numOfLoonies = Random.Range(0, 2);
+        int numOfQuarters = Random.Range(0, 3);
+        int numOfDimes = Random.Range(0, 2);
+        int numOfNickels = Random.Range(0, 2);
 
-    void ClearFare() {
-        foreach (Transform child in fareSpawn.transform) {
-            Destroy(child.gameObject);
-        }
+        CoinSpawn.OnGetCoinsAmount?.Invoke(numOfToonies, numOfLoonies, numOfQuarters, numOfDimes, numOfNickels);
+        farePaid = (float)(numOfToonies * 2 + numOfLoonies * 1 + numOfQuarters * 0.25 + numOfDimes * 0.1 * numOfNickels * 0.05);
     }
 }
