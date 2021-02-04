@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour {
         SetResultsScreen(false);
         SetBusOverlay(true);
         SetLoseScreen(false);
+        FareWindow.OnClose?.Invoke(true);
     }
 
     void RenderLoseScreen() {

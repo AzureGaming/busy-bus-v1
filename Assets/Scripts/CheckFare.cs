@@ -48,6 +48,7 @@ public class CheckFare : BusEvent {
         } else if (farePaid < postedFare) {
             LevelManager.OnMiss?.Invoke();
         }
+        FareWindow.OnClose?.Invoke(false);
         CoinSpawn.OnClearSpawn?.Invoke();
     }
 
@@ -57,6 +58,7 @@ public class CheckFare : BusEvent {
         } else if ((farePaid < postedFare) || (farePaid >= postedFare)) {
             LevelManager.OnComplete?.Invoke();
         }
+        FareWindow.OnClose?.Invoke(false);
         CoinSpawn.OnClearSpawn?.Invoke();
     }
 
@@ -75,6 +77,7 @@ public class CheckFare : BusEvent {
         BusOverlay.OnShowFare?.Invoke();
         hasResponded = false;
         CalculateFarePaid();
+        FareWindow.OnOpen?.Invoke(false);
     }
 
     IEnumerator Timeout() {
@@ -85,6 +88,7 @@ public class CheckFare : BusEvent {
             yield return new WaitForSeconds(7f);
         }
         CoinSpawn.OnClearSpawn?.Invoke();
+        FareWindow.OnClose?.Invoke(false);
         timesUp = true;
     }
 

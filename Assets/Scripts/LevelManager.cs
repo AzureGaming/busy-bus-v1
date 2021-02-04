@@ -13,10 +13,9 @@ public class LevelManager : MonoBehaviour {
     public KeyPrompts keyPrompts;
     public CheckFare checkFare;
 
-    readonly int MAX_MISSES = 5;
     readonly int MAX_RATING = 5;
-    readonly int START_HOUR = 8;
-    readonly int HOURS_IN_DAY = 20; // 00:00 - 20:00
+    readonly int START_HOUR = 6;
+    readonly int HOURS_IN_DAY = 12; // 06:00 - 18:00
     readonly int DAY_IN_REAL_MINUTES = 4;
 
     int misses;
@@ -56,6 +55,7 @@ public class LevelManager : MonoBehaviour {
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
         keyPrompts.Init();
+        DrivingPrompt.OnHide?.Invoke();
         GameManager.OnShowBusOverlay?.Invoke();
     }
 

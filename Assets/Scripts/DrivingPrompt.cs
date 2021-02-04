@@ -4,39 +4,62 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class DrivingPrompt : MonoBehaviour {
-    public delegate void Render(string key);
-    public static Render OnRender;
+    public delegate void Prompt(KeyPrompts.ActionName actionName);
+    public static Prompt OnPrompt;
     public delegate void Hide();
     public static Hide OnHide;
 
-    Text text;
+    public Image background;
+    public Image prompt;
+    public Sprite promptSprite;
+
     CanvasGroup canvasGroup;
+    Vector3 promptLocalScaleStart;
 
     private void Awake() {
         canvasGroup = GetComponent<CanvasGroup>();
-        text = GetComponent<Text>();
+    }
+
+    private void Start() {
+        promptLocalScaleStart = prompt.GetComponent<RectTransform>().localScale;
     }
 
     private void OnEnable() {
-        OnRender += UpdateText;
-        OnHide += HideText;
+        OnPrompt += Show;
+        OnHide += Invisible;
     }
 
     private void OnDisable() {
-        OnRender -= UpdateText;
-        OnHide -= HideText;
+        OnPrompt -= Show;
+        OnHide -= Invisible;
     }
 
-    void UpdateText(string key) {
-        text.GetComponent<Text>().text = "Press " + key + "!";
-        ShowText();
-    }
-
-    void HideText() {
+    void Invisible() {
         canvasGroup.alpha = 0;
     }
 
-    void ShowText() {
+    void Show(KeyPrompts.ActionName actionName) {
         canvasGroup.alpha = 1;
+        RectTransform promptRectTransform = prompt.GetComponent<RectTransform>();
+
+        switch (actionName) {
+            case KeyPrompts.ActionName.Forward:
+                break;
+            case KeyPrompts.ActionName.Left:
+                prompt.sprite = promptSprite;
+                promptRectTransform.localScale = promptLocalScaleStart;
+                break;
+            case KeyPrompts.ActionName.Right:
+                Debug.Log("Render");
+                Vector3 newScale = promptLocalScaleStart;
+                newScale.x *= -1;
+                prompt.sprite = promptSprite;
+                promptRectTransform.localScale = newScale;
+                break;
+            case KeyPrompts.ActionName.Stop:
+                break;
+            default:
+                break;
+        }
     }
 }
