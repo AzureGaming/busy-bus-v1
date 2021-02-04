@@ -5,8 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class KeyPrompts : BusEvent {
-    public bool isDebug;
-
     public enum ActionName {
         Right,
         Left,
@@ -31,7 +29,7 @@ public class KeyPrompts : BusEvent {
     }
 
     public void Init() {
-        if (isDebug) {
+        if (GameManager.IS_DEBUG) {
             eventRoutine = StartCoroutine(DebugRoutine());
         } else {
             eventRoutine = StartCoroutine(EventRoutine());

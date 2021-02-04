@@ -10,9 +10,15 @@ public class GameManager : MonoBehaviour {
     public delegate void ShowLoseScreen();
     public static ShowLoseScreen OnShowLoseScreen;
 
+    public bool isDebug;
+    public static bool IS_DEBUG;
     public GameObject resultsScreen;
     public GameObject busOverlay;
     public GameObject loseScreen;
+
+    private void Awake() {
+        IS_DEBUG = isDebug;
+    }
 
     private void OnEnable() {
         OnShowResults += RenderResultsScreen;

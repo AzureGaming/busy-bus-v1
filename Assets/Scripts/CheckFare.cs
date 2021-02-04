@@ -33,7 +33,11 @@ public class CheckFare : BusEvent {
     }
 
     public void Init() {
-        eventRoutine = StartCoroutine(EventRoutine());
+        if (GameManager.IS_DEBUG) {
+            StartCoroutine(DebugRoutine());
+        } else {
+            eventRoutine = StartCoroutine(EventRoutine());
+        }
     }
 
     public void Stop() {
@@ -73,8 +77,13 @@ public class CheckFare : BusEvent {
         }
     }
 
+    IEnumerator DebugRoutine() {
+        Prompt();
+        yield return StartCoroutine(Listen());
+        Complete();
+    }
+
     void Prompt() {
-        BusOverlay.OnShowFare?.Invoke();
         hasResponded = false;
         CalculateFarePaid();
         FareWindow.OnOpen?.Invoke(false);
@@ -93,8 +102,9 @@ public class CheckFare : BusEvent {
     }
 
     void Complete() {
-        StopCoroutine(timeoutRoutine);
-        BusOverlay.OnHideFare?.Invoke();
+        if (timeoutRoutine != null) {
+            StopCoroutine(timeoutRoutine);
+        }
     }
 
     void LoadNextTime() {

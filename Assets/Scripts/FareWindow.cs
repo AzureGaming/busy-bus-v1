@@ -47,7 +47,6 @@ public class FareWindow : MonoBehaviour {
         float elapsedTime = 0f;
         Vector2 currentPos = transform.position;
         while (elapsedTime < CLOSE_SLIDE_TIME && !isInstant) {
-            Debug.Log("Helo");
             transform.position = Vector2.Lerp(currentPos, closedPos.position, (elapsedTime / CLOSE_SLIDE_TIME));
             elapsedTime += Time.deltaTime;
             yield return null;
