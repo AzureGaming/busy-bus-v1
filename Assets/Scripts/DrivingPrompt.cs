@@ -50,7 +50,6 @@ public class DrivingPrompt : MonoBehaviour {
                 promptRectTransform.localScale = promptLocalScaleStart;
                 break;
             case KeyPrompts.ActionName.Right:
-                Debug.Log("Render");
                 Vector3 newScale = promptLocalScaleStart;
                 newScale.x *= -1;
                 prompt.sprite = promptSprite;
