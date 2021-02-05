@@ -136,8 +136,8 @@ public class CheckFare : BusEvent {
         int numOfToonies = Random.Range(0, 2);
         int numOfLoonies = Random.Range(0, 2);
         int numOfQuarters = Random.Range(0, 3);
-        int numOfDimes = Random.Range(0, 2);
-        int numOfNickels = Random.Range(0, 2);
+        int numOfDimes = Random.Range(0, 3);
+        int numOfNickels = Random.Range(0, 3);
 
         CoinSpawn.OnGetCoinsAmount?.Invoke(numOfToonies, numOfLoonies, numOfQuarters, numOfDimes, numOfNickels);
         farePaid = (float)(numOfToonies * 2 + numOfLoonies * 1 + numOfQuarters * 0.25 + numOfDimes * 0.1 * numOfNickels * 0.05);

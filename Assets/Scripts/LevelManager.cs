@@ -57,6 +57,7 @@ public class LevelManager : MonoBehaviour {
         keyPrompts.Init();
         DrivingPrompt.OnHide?.Invoke();
         GameManager.OnShowBusOverlay?.Invoke();
+        ScoreRating.OnUpdateScore?.Invoke(scoreToday);
     }
 
     void LoseDay() {
@@ -102,8 +103,10 @@ public class LevelManager : MonoBehaviour {
         timeElapsed = 0;
         currentHour = START_HOUR;
         gameHoursPerSecond = targetTime / totalGameHours;
-        Debug.Log("Init Timer");
-        Debug.Log("Target time: " + targetTime + " Game hours per second: " + gameHoursPerSecond);
+        if (GameManager.IS_DEBUG) {
+            Debug.Log("Init Timer");
+            Debug.Log("Target time: " + targetTime + " Game hours per second: " + gameHoursPerSecond);
+        }
     }
 
     IEnumerator UpdateHour() {

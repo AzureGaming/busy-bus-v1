@@ -8,11 +8,9 @@ public class ScoreRating : MonoBehaviour {
 
     int MAX_SCORE = 100;
 
-    //Score score;
     Stars stars;
 
     private void Awake() {
-        //score = GetComponentInChildren<Score>();
         stars = GetComponentInChildren<Stars>();
     }
 
@@ -25,12 +23,14 @@ public class ScoreRating : MonoBehaviour {
     }
 
     void HandleUpdate(int value) {
-        //score.SetValue(value);
         stars.ClearStars();
         int iterations = (int)Mathf.Round(value);
-        Debug.Log(iterations);
         for (int i = 0; i < iterations; i++) {
             stars.RenderStar();
+        }
+
+        if (GameManager.IS_DEBUG) {
+            Debug.Log(iterations);
         }
     }
 }
