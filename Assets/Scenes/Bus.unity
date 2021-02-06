@@ -1165,6 +1165,11 @@ MonoBehaviour:
   slot2: {fileID: 1365125945}
   slot3: {fileID: 1419329720}
   slot4: {fileID: 389427798}
+  slots:
+  - {fileID: 23486696}
+  - {fileID: 1365125945}
+  - {fileID: 1419329720}
+  - {fileID: 389427798}
 --- !u!1 &613707673
 GameObject:
   m_ObjectHideFlags: 0
@@ -2581,6 +2586,10 @@ PrefabInstance:
     - target: {fileID: 6386820590548411003, guid: aebe026af6d1e4346875e8b79dde4f24, type: 3}
       propertyPath: m_fontSizeBase
       value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 6386820590548411003, guid: aebe026af6d1e4346875e8b79dde4f24, type: 3}
+      propertyPath: m_isRightToLeft
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aebe026af6d1e4346875e8b79dde4f24, type: 3}
