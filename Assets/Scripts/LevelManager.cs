@@ -26,6 +26,11 @@ public class LevelManager : MonoBehaviour {
     float gameHoursPerSecond;
     bool isRushHour;
     int commuterQueue;
+    // 0: 6am - 9am
+    // 1: 9am - 12pm
+    // 2: 12pm - 3pm
+    // 3: 3pm - 6pm
+    List<float> fareRates;
 
     private void OnEnable() {
         OnMiss += FailEvent;
@@ -51,6 +56,7 @@ public class LevelManager : MonoBehaviour {
         isRushHour = false;
         commuterQueue = 0;
         InitTimer(DAY_IN_REAL_MINUTES, HOURS_IN_DAY);
+        LoadFareRates();
         StartCoroutine(StartDay());
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
@@ -132,5 +138,18 @@ public class LevelManager : MonoBehaviour {
             }
             yield return null;
         }
+    }
+
+    void LoadFareRates() {
+        fareRates = new List<float>();
+        for (int i = 0; i < 4; i++) {
+            float fare = Random.Range(1f, 4f);
+            fare -= (float)(fare % 0.01); // 2 decimal places
+            Debug.Log("Original Fare: " + fare);
+            fare = Mathf.Round(fare * 10f) / 10f;
+            Debug.Log("Rounded Fare: " + fare);
+            fareRates.Add(fare);
+        }
+        FarePoster.OnUpdateFare?.Invoke(fareRates[0], fareRates[1], fareRates[2], fareRates[3]);
     }
 }
