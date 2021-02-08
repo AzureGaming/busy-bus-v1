@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoadLine : MonoBehaviour {
+public class Building : MonoBehaviour {
     public delegate void Init();
     public static Init OnInit;
     public delegate void Stop();
@@ -22,6 +22,7 @@ public class RoadLine : MonoBehaviour {
     }
 
     private void Start() {
+        transform.localScale = new Vector3(0.1f, 0.1f);
         Move();
     }
 
@@ -31,11 +32,19 @@ public class RoadLine : MonoBehaviour {
     }
 
     IEnumerator MoveRoutine() {
-        while (transform.position.y > -404) {
-            transform.Translate(-Vector3.up);
+        while (transform.localPosition.y > -700) {
+            Vector3 newScale = transform.localScale;
+            //if (newScale.x < 1) {
+                newScale.x += 0.0008f;
+            //}
+            //if (newScale.y < 1) {
+                newScale.y += 0.0008f;
+            //}
+            transform.Translate(-Vector3.up * 0.5f);
+            transform.localScale = newScale;
             yield return null;
         }
-        RoadLines.OnInit?.Invoke();
+        Buildings.OnInit?.Invoke();
         Kill();
     }
 
