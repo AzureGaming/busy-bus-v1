@@ -52,8 +52,10 @@ public class CheckFare : BusEvent {
 
     public void Accept() {
         if (farePaid >= fare) {
+            Debug.Log("success");
             LevelManager.OnComplete?.Invoke();
         } else if (farePaid < fare) {
+            Debug.Log("fail");
             LevelManager.OnMiss?.Invoke();
         }
         FareWindow.OnClose?.Invoke(false);
@@ -62,8 +64,10 @@ public class CheckFare : BusEvent {
 
     public void Reject() {
         if ((farePaid >= fare) || (farePaid < fare)) {
+            Debug.Log("fail");
             LevelManager.OnMiss?.Invoke();
         } else if ((farePaid < fare) || (farePaid >= fare)) {
+            Debug.Log("success");
             LevelManager.OnComplete?.Invoke();
         }
         FareWindow.OnClose?.Invoke(false);
@@ -137,11 +141,11 @@ public class CheckFare : BusEvent {
     }
 
     void CalculateFarePaid() {
-        int numOfToonies = Random.Range(0, 2);
-        int numOfLoonies = Random.Range(0, 2);
+        int numOfToonies = Random.Range(0, 1);
+        int numOfLoonies = Random.Range(0, 1);
         int numOfQuarters = Random.Range(0, 3);
-        int numOfDimes = Random.Range(0, 3);
-        int numOfNickels = Random.Range(0, 3);
+        int numOfDimes = Random.Range(0, 2);
+        int numOfNickels = Random.Range(0, 1);
 
         CoinSpawn.OnGetCoinsAmount?.Invoke(numOfToonies, numOfLoonies, numOfQuarters, numOfDimes, numOfNickels);
         farePaid = (float)(numOfToonies * 2 + numOfLoonies * 1 + numOfQuarters * 0.25 + numOfDimes * 0.1 * numOfNickels * 0.05);

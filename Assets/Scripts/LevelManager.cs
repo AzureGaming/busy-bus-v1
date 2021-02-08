@@ -65,6 +65,7 @@ public class LevelManager : MonoBehaviour {
         DrivingPrompt.OnHide?.Invoke();
         GameManager.OnShowBusOverlay?.Invoke();
         ScoreRating.OnUpdateScore?.Invoke(scoreToday);
+        RoadLines.OnInit?.Invoke();
     }
 
     void LoseDay() {
