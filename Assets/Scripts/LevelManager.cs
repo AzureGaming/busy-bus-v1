@@ -16,7 +16,7 @@ public class LevelManager : MonoBehaviour {
     readonly int MAX_RATING = 5;
     readonly int START_HOUR = 6;
     readonly int HOURS_IN_DAY = 12; // 06:00 - 18:00
-    readonly int DAY_IN_REAL_MINUTES = 4;
+    readonly int DAY_IN_REAL_MINUTES = 1;
 
     int misses;
     int scoreToday;
@@ -26,6 +26,12 @@ public class LevelManager : MonoBehaviour {
     float gameHoursPerSecond;
     bool isRushHour;
     int commuterQueue;
+    // 0: 6am - 9am
+    // 1: 9am - 12pm
+    // 2: 12pm - 3pm
+    // 3: 3pm - 6pm
+    List<float> fareRates;
+    int fareRateIndex;
 
     private void OnEnable() {
         OnMiss += FailEvent;
@@ -51,6 +57,7 @@ public class LevelManager : MonoBehaviour {
         isRushHour = false;
         commuterQueue = 0;
         InitTimer(DAY_IN_REAL_MINUTES, HOURS_IN_DAY);
+        LoadFareRates();
         StartCoroutine(StartDay());
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
@@ -58,6 +65,8 @@ public class LevelManager : MonoBehaviour {
         DrivingPrompt.OnHide?.Invoke();
         GameManager.OnShowBusOverlay?.Invoke();
         ScoreRating.OnUpdateScore?.Invoke(scoreToday);
+        RoadLines.OnInit?.Invoke();
+        Buildings.OnInit?.Invoke();
     }
 
     void LoseDay() {
@@ -110,9 +119,17 @@ public class LevelManager : MonoBehaviour {
     }
 
     IEnumerator UpdateHour() {
+        int hourCounter = 0; // track when to increment fareRateIndex
+
         while (timeElapsed <= targetTime) {
+            if (hourCounter == 3) {
+                fareRateIndex++;
+                hourCounter = 0;
+            }
             OnHourChange?.Invoke(currentHour);
+            FarePoster.OnHighlightFare?.Invoke(fareRateIndex);
             currentHour++;
+            hourCounter++;
             yield return new WaitForSeconds(gameHoursPerSecond);
         }
     }
@@ -132,5 +149,17 @@ public class LevelManager : MonoBehaviour {
             }
             yield return null;
         }
+    }
+
+    void LoadFareRates() {
+        fareRates = new List<float>();
+        fareRateIndex = 0;
+        for (int i = 0; i < 4; i++) {
+            float fare = Random.Range(1f, 4f);
+            fare -= (float)(fare % 0.01); // 2 decimal places
+            fare = Mathf.Round(fare * 10f) / 10f;
+            fareRates.Add(fare);
+        }
+        FarePoster.OnUpdateFare?.Invoke(fareRates[0], fareRates[1], fareRates[2], fareRates[3]);
     }
 }
