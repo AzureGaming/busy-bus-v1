@@ -10,6 +10,7 @@ public class CheckFare : BusEvent {
     public static UpdateFare OnUpdateFare;
 
     public GameObject fareSpawn;
+    public GameObject civilianPrefab;
     public Button acceptButton;
     public Button rejectButton;
 
@@ -20,6 +21,7 @@ public class CheckFare : BusEvent {
     bool hasResponded;
     bool timesUp;
     float nextTime;
+    bool answer;
 
     private void Start() {
         acceptButton.onClick.AddListener(OnClick);
@@ -51,27 +53,11 @@ public class CheckFare : BusEvent {
     }
 
     public void Accept() {
-        if (farePaid >= fare) {
-            Debug.Log("success");
-            LevelManager.OnComplete?.Invoke();
-        } else if (farePaid < fare) {
-            Debug.Log("fail");
-            LevelManager.OnMiss?.Invoke();
-        }
-        FareWindow.OnClose?.Invoke(false);
-        CoinSpawn.OnClearSpawn?.Invoke();
+        answer = true;
     }
 
     public void Reject() {
-        if ((farePaid >= fare) || (farePaid < fare)) {
-            Debug.Log("fail");
-            LevelManager.OnMiss?.Invoke();
-        } else if ((farePaid < fare) || (farePaid >= fare)) {
-            Debug.Log("success");
-            LevelManager.OnComplete?.Invoke();
-        }
-        FareWindow.OnClose?.Invoke(false);
-        CoinSpawn.OnClearSpawn?.Invoke();
+        answer = false;
     }
 
     IEnumerator EventRoutine() {
@@ -95,6 +81,7 @@ public class CheckFare : BusEvent {
         hasResponded = false;
         CalculateFarePaid();
         FareWindow.OnOpen?.Invoke(false);
+        Passenger.OnEnterBus?.Invoke();
     }
 
     IEnumerator Timeout() {
@@ -104,15 +91,36 @@ public class CheckFare : BusEvent {
         } else {
             yield return new WaitForSeconds(7f);
         }
+        timesUp = true;
+
         CoinSpawn.OnClearSpawn?.Invoke();
         FareWindow.OnClose?.Invoke(false);
-        timesUp = true;
+        Passenger.OnLeaveBus?.Invoke();
     }
 
     void Complete() {
         if (timeoutRoutine != null) {
             StopCoroutine(timeoutRoutine);
         }
+        Debug.Log("Answer: " + answer);
+        if (answer) {
+            if (farePaid >= fare) {
+                LevelManager.OnComplete?.Invoke();
+                Passenger.OnStayBus?.Invoke();
+            } else {
+                LevelManager.OnMiss?.Invoke();
+            }
+        } else if (!answer) {
+            if (farePaid >= fare) {
+                LevelManager.OnMiss?.Invoke();
+            } else {
+                LevelManager.OnComplete?.Invoke();
+            }
+            Passenger.OnLeaveBus?.Invoke();
+        }
+
+        FareWindow.OnClose?.Invoke(false);
+        CoinSpawn.OnClearSpawn?.Invoke();
     }
 
     void LoadNextTime() {
