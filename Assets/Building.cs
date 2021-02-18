@@ -22,7 +22,7 @@ public class Building : MonoBehaviour {
     }
 
     private void Start() {
-        transform.localScale = new Vector3(0.1f, 0.1f);
+        //transform.localScale = new Vector3(0.1f, 0.1f);
         Move();
     }
 
@@ -35,12 +35,12 @@ public class Building : MonoBehaviour {
         while (transform.localPosition.y > -700) {
             Vector3 newScale = transform.localScale;
             //if (newScale.x < 1) {
-                newScale.x += 0.0008f;
+                newScale.x += 0.0001f;
             //}
             //if (newScale.y < 1) {
-                newScale.y += 0.0008f;
+                newScale.y += 0.0001f;
             //}
-            transform.Translate(-Vector3.up * 0.5f);
+            transform.Translate(-Vector3.up * 0.25f);
             transform.localScale = newScale;
             yield return null;
         }
