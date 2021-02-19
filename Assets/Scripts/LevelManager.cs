@@ -67,6 +67,7 @@ public class LevelManager : MonoBehaviour {
         ScoreRating.OnUpdateScore?.Invoke(scoreToday);
         RoadLines.OnInit?.Invoke();
         Buildings.OnInit?.Invoke();
+        Trees.OnInit?.Invoke();
     }
 
     void LoseDay() {
