@@ -82,6 +82,7 @@ public class CheckFare : BusEvent {
         CalculateFarePaid();
         FareWindow.OnOpen?.Invoke(false);
         Passenger.OnEnterBus?.Invoke();
+        BusStop.OnShow?.Invoke();
     }
 
     IEnumerator Timeout() {
@@ -96,6 +97,7 @@ public class CheckFare : BusEvent {
         CoinSpawn.OnClearSpawn?.Invoke();
         FareWindow.OnClose?.Invoke(false);
         Passenger.OnLeaveBus?.Invoke();
+        BusStop.OnHide?.Invoke();
     }
 
     void Complete() {
@@ -117,6 +119,7 @@ public class CheckFare : BusEvent {
                 LevelManager.OnComplete?.Invoke();
             }
             Passenger.OnLeaveBus?.Invoke();
+            BusStop.OnHide?.Invoke();
         }
 
         FareWindow.OnClose?.Invoke(false);

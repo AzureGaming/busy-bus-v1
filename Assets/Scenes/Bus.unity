@@ -1803,7 +1803,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 1533194522}
   prompt: {fileID: 1418971215}
-  promptSprite: {fileID: 21300000, guid: 22f1b2a1d4458ff43830798c16f169c9, type: 3}
+  arrowPromptSprite: {fileID: 21300000, guid: 22f1b2a1d4458ff43830798c16f169c9, type: 3}
+  brakeSprites:
+  - {fileID: 809449569781042497, guid: eaec2c6ba91a32943a771468aaa18268, type: 3}
+  - {fileID: -1543814298884268970, guid: eaec2c6ba91a32943a771468aaa18268, type: 3}
+  - {fileID: -1688150590487820512, guid: eaec2c6ba91a32943a771468aaa18268, type: 3}
+  - {fileID: 5075595661694729378, guid: eaec2c6ba91a32943a771468aaa18268, type: 3}
+  - {fileID: -6775470055465510346, guid: eaec2c6ba91a32943a771468aaa18268, type: 3}
 --- !u!225 &921345697
 CanvasGroup:
   m_ObjectHideFlags: 0
