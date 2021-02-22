@@ -101,7 +101,7 @@ public class CheckFare : BusEvent {
             yield return null;
         }
         timesUp = true;
-        
+
         CoinSpawn.OnClearSpawn?.Invoke();
         FareWindow.OnClose?.Invoke(false);
         Passenger.OnLeaveBus?.Invoke();
@@ -160,14 +160,32 @@ public class CheckFare : BusEvent {
     }
 
     void CalculateFarePaid() {
-        int numOfToonies = Random.Range(0, 1);
-        int numOfLoonies = Random.Range(0, 1);
-        int numOfQuarters = Random.Range(0, 3);
-        int numOfDimes = Random.Range(0, 2);
-        int numOfNickels = Random.Range(0, 1);
+        int numOfToonies = Random.Range(0, 2);
+        int numOfLoonies = Random.Range(0, 2);
+        int numOfNickels;
+        int numOfQuarters;
+        int numOfDimes;
+
+        if (numOfToonies == 1 && numOfLoonies == 1) {
+            numOfQuarters = Random.Range(0, 3);
+            numOfNickels = Random.Range(0, 2);
+            numOfDimes = 0;
+        } else if (numOfToonies == 1 && numOfLoonies == 0) {
+            numOfQuarters = Random.Range(0, 3);
+            numOfNickels = Random.Range(0, 2);
+            numOfDimes = Random.Range(0, 2);
+        } else if (numOfToonies == 0 && numOfLoonies == 1) {
+            numOfQuarters = Random.Range(0, 2);
+            numOfNickels = Random.Range(0, 1);
+            numOfDimes = Random.Range(0, 1);
+        } else {
+            numOfQuarters = Random.Range(0, 3);
+            numOfNickels = Random.Range(0, 1);
+            numOfDimes = Random.Range(0, 1);
+        }
 
         CoinSpawn.OnGetCoinsAmount?.Invoke(numOfToonies, numOfLoonies, numOfQuarters, numOfDimes, numOfNickels);
-        farePaid = (float)(numOfToonies * 2 + numOfLoonies * 1 + numOfQuarters * 0.25 + numOfDimes * 0.1 * numOfNickels * 0.05);
+        farePaid = (float)( ( numOfToonies * 2 ) + ( numOfLoonies * 1 ) + ( numOfQuarters * 0.25 ) + ( numOfDimes * 0.1 ) + ( numOfNickels * 0.05 ) );
     }
 
     void SetFare(float value) {

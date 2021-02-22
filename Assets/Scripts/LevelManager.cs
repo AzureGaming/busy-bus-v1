@@ -156,7 +156,7 @@ public class LevelManager : MonoBehaviour {
         fareRates = new List<float>();
         fareRateIndex = 0;
         for (int i = 0; i < 4; i++) {
-            float fare = Random.Range(1f, 4f);
+            float fare = Random.Range(2f, 4f);
             fare -= (float)(fare % 0.01); // 2 decimal places
             fare = Mathf.Round(fare * 10f) / 10f;
             fareRates.Add(fare);
