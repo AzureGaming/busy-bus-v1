@@ -27,4 +27,17 @@ public abstract class BusEvent : MonoBehaviour {
     void EndRush() {
         isRushHour = false;
     }
+
+    protected void Rate(float timeLeft, float timeTotal) {
+        float ratio = timeLeft / timeTotal;
+        if (ratio <= 0) {
+            EventRating.OnFail?.Invoke();
+        } else if (ratio > 0 && ratio <= 0.33) {
+            EventRating.OnGood?.Invoke();
+        } else if (ratio > 0.33 && ratio <= 0.66) {
+            EventRating.OnGreat?.Invoke();
+        } else if (ratio > 0.66) {
+            EventRating.OnAwesome?.Invoke();
+        }
+    }
 }

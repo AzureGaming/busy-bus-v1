@@ -22,6 +22,8 @@ public class CheckFare : BusEvent {
     bool timesUp;
     float nextTime;
     bool answer;
+    float timeLeft;
+    float timeTotal;
 
     private void Start() {
         acceptButton.onClick.AddListener(OnClick);
@@ -88,12 +90,18 @@ public class CheckFare : BusEvent {
     IEnumerator Timeout() {
         timesUp = false;
         if (isRushHour) {
-            yield return new WaitForSeconds(5f);
+            timeTotal = 5f;
         } else {
-            yield return new WaitForSeconds(7f);
+            timeTotal = 7f;
+        }
+        timeLeft = timeTotal;
+
+        while (timeLeft > 0) {
+            timeLeft -= Time.deltaTime;
+            yield return null;
         }
         timesUp = true;
-
+        
         CoinSpawn.OnClearSpawn?.Invoke();
         FareWindow.OnClose?.Invoke(false);
         Passenger.OnLeaveBus?.Invoke();
@@ -121,7 +129,7 @@ public class CheckFare : BusEvent {
             Passenger.OnLeaveBus?.Invoke();
             BusStop.OnHide?.Invoke();
         }
-
+        base.Rate(timeLeft, timeTotal);
         FareWindow.OnClose?.Invoke(false);
         CoinSpawn.OnClearSpawn?.Invoke();
     }

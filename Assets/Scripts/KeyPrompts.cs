@@ -18,6 +18,8 @@ public class KeyPrompts : BusEvent {
     Coroutine timeoutRoutine;
     float nextTime;
     bool timesUp;
+    float timeLeft;
+    float timeTotal;
 
     private void Awake() {
         keyCodes = new KeyCode[4] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.Space };
@@ -90,6 +92,7 @@ public class KeyPrompts : BusEvent {
         if (timeoutRoutine != null) {
             StopCoroutine(timeoutRoutine);
         }
+        base.Rate(timeLeft, timeTotal);
         DrivingPrompt.OnHide?.Invoke();
     }
 
@@ -112,6 +115,10 @@ public class KeyPrompts : BusEvent {
         int counter = 0;
         int index = 0;
         while (index < 3) {
+            if (timesUp) {
+                LevelManager.OnMiss?.Invoke();
+                yield break;
+            }
             if (counter == 3) {
                 counter = 0;
                 index++;
@@ -128,13 +135,19 @@ public class KeyPrompts : BusEvent {
     IEnumerator Timeout() {
         timesUp = false;
         if (expectedKey == KeyCode.Space) {
-            yield return new WaitForSeconds(5f);
+            timeTotal = 5f;
         } else {
             if (isRushHour) {
-                yield return new WaitForSeconds(0.5f);
+                timeTotal = 0.75f;
             } else {
-                yield return new WaitForSeconds(3f);
+                timeTotal = 3f;
             }
+        }
+        timeLeft = timeTotal;
+
+        while (timeLeft > 0) {
+            timeLeft -= Time.deltaTime;
+            yield return null;
         }
         timesUp = true;
     }
