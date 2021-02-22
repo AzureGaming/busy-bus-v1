@@ -13,17 +13,18 @@ public class CheckFare : BusEvent {
     public GameObject civilianPrefab;
     public Button acceptButton;
     public Button rejectButton;
+    public static bool isCheckingFare;
 
     Coroutine timeoutRoutine;
     Coroutine eventRoutine;
     float fare;
     float farePaid;
-    bool hasResponded;
-    bool timesUp;
     float nextTime;
-    bool answer;
     float timeLeft;
     float timeTotal;
+    bool answer;
+    bool hasResponded;
+    bool timesUp;
 
     private void Start() {
         acceptButton.onClick.AddListener(OnClick);
@@ -81,6 +82,7 @@ public class CheckFare : BusEvent {
 
     void Prompt() {
         hasResponded = false;
+        isCheckingFare = true;
         CalculateFarePaid();
         FareWindow.OnOpen?.Invoke(false);
         Passenger.OnEnterBus?.Invoke();
@@ -115,23 +117,23 @@ public class CheckFare : BusEvent {
         Debug.Log("Answer: " + answer);
         if (answer) {
             if (farePaid >= fare) {
-                LevelManager.OnComplete?.Invoke();
-                Passenger.OnStayBus?.Invoke();
+                Rate(timeLeft, timeTotal);
             } else {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
             }
         } else if (!answer) {
             if (farePaid >= fare) {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
             } else {
-                LevelManager.OnComplete?.Invoke();
+                Rate(timeLeft, timeTotal);
             }
             Passenger.OnLeaveBus?.Invoke();
             BusStop.OnHide?.Invoke();
         }
-        base.Rate(timeLeft, timeTotal);
+        
         FareWindow.OnClose?.Invoke(false);
         CoinSpawn.OnClearSpawn?.Invoke();
+        isCheckingFare = false;
     }
 
     void LoadNextTime() {
@@ -148,7 +150,7 @@ public class CheckFare : BusEvent {
             if (hasResponded) {
                 return true;
             } else if (timesUp) {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
                 return true;
             }
             return false;

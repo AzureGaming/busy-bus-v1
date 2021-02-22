@@ -72,8 +72,12 @@ public class KeyPrompts : BusEvent {
         int randomIndex = Random.Range(0, keyCodeMap.Count);
         ActionName actionName = keyCodeMap.ElementAt(randomIndex).Key;
         expectedKey = keyCodeMap.ElementAt(randomIndex).Value;
-        Debug.Log("Prompt" + actionName);
-        DrivingPrompt.OnPrompt?.Invoke(actionName);
+        if (expectedKey == KeyCode.Space && CheckFare.isCheckingFare) {
+            Prompt();
+        } else {
+            Debug.Log("Prompt" + actionName);
+            DrivingPrompt.OnPrompt?.Invoke(actionName);
+        }
     }
 
     void Prompt(int index) {
@@ -92,7 +96,6 @@ public class KeyPrompts : BusEvent {
         if (timeoutRoutine != null) {
             StopCoroutine(timeoutRoutine);
         }
-        base.Rate(timeLeft, timeTotal);
         DrivingPrompt.OnHide?.Invoke();
     }
 
@@ -100,11 +103,11 @@ public class KeyPrompts : BusEvent {
         yield return new WaitUntil(() => {
             string input = Input.inputString;
             if (input == expectedKey.ToString().ToLower()) {
-                LevelManager.OnComplete?.Invoke();
+                Rate(timeLeft, timeTotal);
                 return true;
             }
             if (input.Length > 0 || timesUp) {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
                 return true;
             }
             return false;
@@ -116,7 +119,7 @@ public class KeyPrompts : BusEvent {
         int index = 0;
         while (index < 3) {
             if (timesUp) {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
                 yield break;
             }
             if (counter == 3) {
@@ -129,7 +132,7 @@ public class KeyPrompts : BusEvent {
             }
             yield return null;
         }
-        LevelManager.OnComplete?.Invoke();
+        Rate(timeLeft, timeTotal);
     }
 
     IEnumerator Timeout() {

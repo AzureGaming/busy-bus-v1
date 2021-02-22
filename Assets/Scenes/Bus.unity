@@ -596,7 +596,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57be8fc233acdf1449939bea8e4ecf04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starPrefab: {fileID: 2310016107822010086, guid: d4fe58ded3eaf5241a6604e410a4fdf0, type: 3}
+  starPrefab100: {fileID: 2310016107822010086, guid: d4fe58ded3eaf5241a6604e410a4fdf0, type: 3}
+  starPrefab75: {fileID: 2310016107822010086, guid: a1fba8abb43854644bc0814c3b1a42da, type: 3}
+  starPrefab50: {fileID: 2310016107822010086, guid: 091a133faa673fb4eab1ab0794420782, type: 3}
+  starPrefab25: {fileID: 2310016107822010086, guid: 65e381875aed99f409622d3e08bfdd5c, type: 3}
 --- !u!114 &359046137
 MonoBehaviour:
   m_ObjectHideFlags: 0

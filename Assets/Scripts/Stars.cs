@@ -3,10 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Stars : MonoBehaviour {
-    public GameObject starPrefab;
+    public GameObject starPrefab100;
+    public GameObject starPrefab75;
+    public GameObject starPrefab50;
+    public GameObject starPrefab25;
 
-    public void RenderStar() {
-        Instantiate(starPrefab, transform);
+    public void Render100Star() {
+        Instantiate(starPrefab100, transform);
+    }
+
+    public void Render75Star() {
+        Instantiate(starPrefab75, transform);
+    }
+
+    public void Render50Star() {
+        Instantiate(starPrefab50, transform);
+    }
+
+    public void Render25Star() {
+        Instantiate(starPrefab25, transform);
     }
 
     public void ClearStars() {
