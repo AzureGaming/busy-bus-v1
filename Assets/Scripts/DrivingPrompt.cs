@@ -8,10 +8,13 @@ public class DrivingPrompt : MonoBehaviour {
     public static Prompt OnPrompt;
     public delegate void Hide();
     public static Hide OnHide;
+    public delegate void PromptBrake(int index);
+    public static PromptBrake OnPromptBrake;
 
     public Image background;
     public Image prompt;
-    public Sprite promptSprite;
+    public Sprite arrowPromptSprite;
+    public Sprite[] brakeSprites;
 
     CanvasGroup canvasGroup;
     Vector3 promptLocalScaleStart;
@@ -27,11 +30,13 @@ public class DrivingPrompt : MonoBehaviour {
     private void OnEnable() {
         OnPrompt += Show;
         OnHide += Invisible;
+        OnPromptBrake += ShowBrake;
     }
 
     private void OnDisable() {
         OnPrompt -= Show;
         OnHide -= Invisible;
+        OnPromptBrake -= ShowBrake;
     }
 
     void Invisible() {
@@ -46,19 +51,24 @@ public class DrivingPrompt : MonoBehaviour {
             case KeyPrompts.ActionName.Forward:
                 break;
             case KeyPrompts.ActionName.Left:
-                prompt.sprite = promptSprite;
+                prompt.sprite = arrowPromptSprite;
                 promptRectTransform.localScale = promptLocalScaleStart;
                 break;
             case KeyPrompts.ActionName.Right:
                 Vector3 newScale = promptLocalScaleStart;
                 newScale.x *= -1;
-                prompt.sprite = promptSprite;
+                prompt.sprite = arrowPromptSprite;
                 promptRectTransform.localScale = newScale;
                 break;
             case KeyPrompts.ActionName.Stop:
+                prompt.sprite = brakeSprites[0];
                 break;
             default:
                 break;
         }
     }
-}
+
+    void ShowBrake(int index) {
+        prompt.sprite = brakeSprites[index];
+    }
+} 

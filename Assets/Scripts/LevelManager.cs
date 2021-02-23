@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour {
-    public delegate void Miss();
-    public static Miss OnMiss;
-    public delegate void Complete();
+    public delegate void Complete(float ratingLevel);
     public static Complete OnComplete;
     public delegate void HourChange(int time);
     public static HourChange OnHourChange;
@@ -19,7 +17,7 @@ public class LevelManager : MonoBehaviour {
     readonly int DAY_IN_REAL_MINUTES = 1;
 
     int misses;
-    int scoreToday;
+    float scoreToday;
     float targetTime;
     float timeElapsed;
     int currentHour;
@@ -34,12 +32,10 @@ public class LevelManager : MonoBehaviour {
     int fareRateIndex;
 
     private void OnEnable() {
-        OnMiss += FailEvent;
         OnComplete += CompleteEvent;
     }
 
     private void OnDisable() {
-        OnMiss -= FailEvent;
         OnComplete -= CompleteEvent;
     }
 
@@ -83,21 +79,9 @@ public class LevelManager : MonoBehaviour {
         GameManager.OnShowResults?.Invoke();
     }
 
-    void FailEvent() {
-        //if (scoreToday > 0) {
-        //    scoreToday--;
-        //    ScoreRating.OnUpdateScore?.Invoke(scoreToday);
-        //} else {
-        //    LoseDay();
-        //}
-        //Misses.OnUpdate?.Invoke(misses);
-    }
-
-    void CompleteEvent() {
-        if (scoreToday < MAX_RATING) {
-            scoreToday++;
-            ScoreRating.OnUpdateScore?.Invoke(scoreToday);
-        }
+    void CompleteEvent(float ratingLevel) {
+        scoreToday += ratingLevel;
+        ScoreRating.OnUpdateScore?.Invoke(scoreToday);
     }
 
     IEnumerator StartDay() {
@@ -156,8 +140,8 @@ public class LevelManager : MonoBehaviour {
         fareRates = new List<float>();
         fareRateIndex = 0;
         for (int i = 0; i < 4; i++) {
-            float fare = Random.Range(1f, 4f);
-            fare -= (float)(fare % 0.01); // 2 decimal places
+            float fare = Random.Range(2f, 4f);
+            fare -= (float)( fare % 0.01 ); // 2 decimal places
             fare = Mathf.Round(fare * 10f) / 10f;
             fareRates.Add(fare);
         }

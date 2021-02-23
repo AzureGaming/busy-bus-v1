@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ScoreRating : MonoBehaviour {
-    public delegate void UpdateScore(int score);
+    public delegate void UpdateScore(float score);
     public static UpdateScore OnUpdateScore;
-
-    int MAX_SCORE = 100;
 
     Stars stars;
 
@@ -22,15 +20,26 @@ public class ScoreRating : MonoBehaviour {
         OnUpdateScore -= HandleUpdate;
     }
 
-    void HandleUpdate(int value) {
+    void HandleUpdate(float value) {
         stars.ClearStars();
-        int iterations = (int)Mathf.Round(value);
-        for (int i = 0; i < iterations; i++) {
-            stars.RenderStar();
+        while (value - 1 > 0) {
+            value--;
+            stars.Render100Star();
         }
 
-        if (GameManager.IS_DEBUG) {
-            Debug.Log(iterations);
+        while (value - 0.75f > 0) {
+            value -= 0.75f;
+            stars.Render75Star();
+        }
+
+        while (value - 0.5f > 0) {
+            value -= 0.5f;
+            stars.Render50Star();
+        }
+
+        while (value - 0.25f > 0) {
+            value -= 0.25f;
+            stars.Render25Star();
         }
     }
 }

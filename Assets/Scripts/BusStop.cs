@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class BusStop : MonoBehaviour {
-    public delegate void PassengerBoard();
-    public static PassengerBoard OnPasengerBoard;
-    public delegate void PassengerLeave();
-    public static PassengerLeave OnPassengerLeave;
+    public delegate void Show();
+    public static Show OnShow;
+    public delegate void Hide();
+    public static Hide OnHide;
 
     Image image;
 
@@ -20,13 +20,13 @@ public class BusStop : MonoBehaviour {
     }
 
     private void OnEnable() {
-        OnPasengerBoard += ShowImage;
-        OnPassengerLeave += HideImage;
+        OnShow += ShowImage;
+        OnHide += HideImage;
     }
 
     private void OnDisable() {
-        OnPasengerBoard -= ShowImage;
-        OnPassengerLeave -= HideImage;
+        OnShow -= ShowImage;
+        OnHide -= HideImage;
     }
 
     void HideImage() {

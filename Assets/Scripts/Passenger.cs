@@ -43,13 +43,13 @@ public class Passenger : MonoBehaviour {
         float waitTime = 0.5f;
         float elapsedTime = 0f;
         Vector2 currentPos = passenger.transform.position;
+
         while (elapsedTime < waitTime) {
-            passenger.transform.position = Vector2.Lerp(currentPos, endPos, (elapsedTime / waitTime));
+            passenger.transform.position = Vector2.Lerp(currentPos, endPos, ( elapsedTime / waitTime ));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
         passenger.transform.position = endPos;
-        BusStop.OnPasengerBoard?.Invoke();
     }
 
     IEnumerator StayRoutine() {
@@ -60,6 +60,5 @@ public class Passenger : MonoBehaviour {
         passenger.transform.position = hidePosition.position;
         image.color = startingColor;
         yield return null;
-        BusStop.OnPassengerLeave?.Invoke();
     }
 }

@@ -7,18 +7,20 @@ public class RoadLine : MonoBehaviour {
     public static Init OnInit;
     public delegate void Stop();
     public static Stop OnStop;
+    public delegate void Continue();
+    public static Continue OnContinue;
 
+    bool isStopped = false;
     Coroutine routine;
-    bool isVisible;
 
     private void OnEnable() {
-        //OnInit += Move;
-        OnStop += Kill;
+        OnStop += StopMoving;
+        OnContinue += ResumeMoving;
     }
 
     private void OnDisable() {
-        //OnInit -= Move;
-        OnStop -= Kill;
+        OnStop -= StopMoving;
+        OnContinue -= ResumeMoving;
     }
 
     private void Start() {
@@ -26,17 +28,18 @@ public class RoadLine : MonoBehaviour {
     }
 
     void Move() {
-        isVisible = true;
         routine = StartCoroutine(MoveRoutine());
     }
 
     IEnumerator MoveRoutine() {
         while (transform.position.y > -404) {
-            transform.Translate(-Vector3.up * 0.75f);
+            if (!isStopped) {
+                transform.Translate(-Vector3.up * 0.75f);
+            }
             yield return null;
         }
         RoadLines.OnInit?.Invoke();
-        Kill();
+        Destroy(gameObject);
     }
 
     void StopMoveRoutine() {
@@ -45,8 +48,11 @@ public class RoadLine : MonoBehaviour {
         }
     }
 
-    void Kill() {
-        StopMoveRoutine();
-        Destroy(gameObject);
+    void StopMoving() {
+        isStopped = true;
+    }
+
+    void ResumeMoving() {
+        isStopped = false;
     }
 }

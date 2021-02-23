@@ -5,15 +5,26 @@ using UnityEngine;
 public class Trees : MonoBehaviour {
     public delegate void Init();
     public static Init OnInit;
+    public delegate void Stop();
+    public static Stop OnStop;
+    public delegate void Continue();
+    public static Continue OnContinue;
+
     public GameObject treePrefab;
     public GameObject spawnPoint;
 
+    bool isStopped = false;
+
     private void OnEnable() {
         OnInit += StartMove;
+        OnStop += StopMoving;
+        OnContinue += ResumeMoving;
     }
 
     private void OnDisable() {
         OnInit -= StartMove;
+        OnStop -= StopMoving;
+        OnContinue -= ResumeMoving;
     }
 
     void SpawnTree() {
@@ -27,9 +38,23 @@ public class Trees : MonoBehaviour {
 
     IEnumerator SpawnTreeRoutine() {
         for (; ; ) {
-            SpawnTree();
-            // TODO: spawn with more variety?
-            yield return new WaitForSeconds(2f);
+            if (!isStopped) {
+                SpawnTree();
+                // TODO: spawn with more variety?
+                yield return new WaitForSeconds(2f);
+            } else {
+                yield return null;
+            }
         }
+    }
+
+    void StopMoving() {
+        isStopped = true;
+        Tree.OnStop?.Invoke();
+    }
+
+    void ResumeMoving() {
+        isStopped = false;
+        Tree.OnContinue?.Invoke();
     }
 }

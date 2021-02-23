@@ -13,15 +13,18 @@ public class CheckFare : BusEvent {
     public GameObject civilianPrefab;
     public Button acceptButton;
     public Button rejectButton;
+    public static bool isCheckingFare;
 
     Coroutine timeoutRoutine;
     Coroutine eventRoutine;
     float fare;
     float farePaid;
+    float nextTime;
+    float timeLeft;
+    float timeTotal;
+    bool answer;
     bool hasResponded;
     bool timesUp;
-    float nextTime;
-    bool answer;
 
     private void Start() {
         acceptButton.onClick.AddListener(OnClick);
@@ -79,23 +82,32 @@ public class CheckFare : BusEvent {
 
     void Prompt() {
         hasResponded = false;
+        isCheckingFare = true;
         CalculateFarePaid();
         FareWindow.OnOpen?.Invoke(false);
         Passenger.OnEnterBus?.Invoke();
+        BusStop.OnShow?.Invoke();
     }
 
     IEnumerator Timeout() {
         timesUp = false;
         if (isRushHour) {
-            yield return new WaitForSeconds(5f);
+            timeTotal = 5f;
         } else {
-            yield return new WaitForSeconds(7f);
+            timeTotal = 7f;
+        }
+        timeLeft = timeTotal;
+
+        while (timeLeft > 0) {
+            timeLeft -= Time.deltaTime;
+            yield return null;
         }
         timesUp = true;
 
         CoinSpawn.OnClearSpawn?.Invoke();
         FareWindow.OnClose?.Invoke(false);
         Passenger.OnLeaveBus?.Invoke();
+        BusStop.OnHide?.Invoke();
     }
 
     void Complete() {
@@ -105,22 +117,23 @@ public class CheckFare : BusEvent {
         Debug.Log("Answer: " + answer);
         if (answer) {
             if (farePaid >= fare) {
-                LevelManager.OnComplete?.Invoke();
-                Passenger.OnStayBus?.Invoke();
+                Rate(timeLeft, timeTotal);
             } else {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
             }
         } else if (!answer) {
             if (farePaid >= fare) {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
             } else {
-                LevelManager.OnComplete?.Invoke();
+                Rate(timeLeft, timeTotal);
             }
             Passenger.OnLeaveBus?.Invoke();
+            BusStop.OnHide?.Invoke();
         }
-
+        
         FareWindow.OnClose?.Invoke(false);
         CoinSpawn.OnClearSpawn?.Invoke();
+        isCheckingFare = false;
     }
 
     void LoadNextTime() {
@@ -137,7 +150,7 @@ public class CheckFare : BusEvent {
             if (hasResponded) {
                 return true;
             } else if (timesUp) {
-                LevelManager.OnMiss?.Invoke();
+                Fail();
                 return true;
             }
             return false;
@@ -149,14 +162,32 @@ public class CheckFare : BusEvent {
     }
 
     void CalculateFarePaid() {
-        int numOfToonies = Random.Range(0, 1);
-        int numOfLoonies = Random.Range(0, 1);
-        int numOfQuarters = Random.Range(0, 3);
-        int numOfDimes = Random.Range(0, 2);
-        int numOfNickels = Random.Range(0, 1);
+        int numOfToonies = Random.Range(0, 2);
+        int numOfLoonies = Random.Range(0, 2);
+        int numOfNickels;
+        int numOfQuarters;
+        int numOfDimes;
+
+        if (numOfToonies == 1 && numOfLoonies == 1) {
+            numOfQuarters = Random.Range(0, 3);
+            numOfNickels = Random.Range(0, 2);
+            numOfDimes = 0;
+        } else if (numOfToonies == 1 && numOfLoonies == 0) {
+            numOfQuarters = Random.Range(0, 3);
+            numOfNickels = Random.Range(0, 2);
+            numOfDimes = Random.Range(0, 2);
+        } else if (numOfToonies == 0 && numOfLoonies == 1) {
+            numOfQuarters = Random.Range(0, 2);
+            numOfNickels = Random.Range(0, 1);
+            numOfDimes = Random.Range(0, 1);
+        } else {
+            numOfQuarters = Random.Range(0, 3);
+            numOfNickels = Random.Range(0, 1);
+            numOfDimes = Random.Range(0, 1);
+        }
 
         CoinSpawn.OnGetCoinsAmount?.Invoke(numOfToonies, numOfLoonies, numOfQuarters, numOfDimes, numOfNickels);
-        farePaid = (float)(numOfToonies * 2 + numOfLoonies * 1 + numOfQuarters * 0.25 + numOfDimes * 0.1 * numOfNickels * 0.05);
+        farePaid = (float)( ( numOfToonies * 2 ) + ( numOfLoonies * 1 ) + ( numOfQuarters * 0.25 ) + ( numOfDimes * 0.1 ) + ( numOfNickels * 0.05 ) );
     }
 
     void SetFare(float value) {
