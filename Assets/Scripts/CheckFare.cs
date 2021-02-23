@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CheckFare : BusEvent {
-    public delegate void QueueCommuters();
-    public static QueueCommuters OnQueueCommuters;
     public delegate void UpdateFare(float fare);
     public static UpdateFare OnUpdateFare;
 
@@ -16,77 +14,57 @@ public class CheckFare : BusEvent {
     public static bool isCheckingFare;
 
     Coroutine timeoutRoutine;
-    Coroutine eventRoutine;
     float fare;
     float farePaid;
-    float nextTime;
     float timeLeft;
     float timeTotal;
+    float nextTime;
     bool answer;
     bool hasResponded;
-    bool timesUp;
-
-    private void Start() {
-        acceptButton.onClick.AddListener(OnClick);
-        rejectButton.onClick.AddListener(OnClick);
-    }
+    bool failedEvent;
 
     private void OnEnable() {
-        OnQueueCommuters += Init;
         OnUpdateFare += SetFare;
     }
 
     private void OnDisable() {
-        OnQueueCommuters -= Init;
         OnUpdateFare -= SetFare;
     }
 
     public void Init() {
-        if (GameManager.IS_DEBUG) {
-            StartCoroutine(DebugRoutine());
-        } else {
-            eventRoutine = StartCoroutine(EventRoutine());
-        }
+        StartCoroutine(EventRoutine());
     }
 
     public void Stop() {
-        if (eventRoutine != null) {
-            StopCoroutine(eventRoutine);
-        }
-        if (timeoutRoutine != null) {
-            StopCoroutine(timeoutRoutine);
-        }
+        StopAllCoroutines();
         CoinSpawn.OnClearSpawn?.Invoke();
     }
 
     public void Accept() {
+        hasResponded = true;
         answer = true;
     }
 
     public void Reject() {
+        hasResponded = true;
         answer = false;
     }
 
     IEnumerator EventRoutine() {
-        Prompt();
-        timeoutRoutine = StartCoroutine(Timeout());
-        yield return StartCoroutine(Listen());
-        Complete();
-        if (timeoutRoutine != null) {
-            StopCoroutine(timeoutRoutine);
+        for (; ; ) {
+            LoadNextTime();
+            yield return new WaitForSeconds(nextTime);
+            Prompt();
+            timeoutRoutine = StartCoroutine(Timeout());
+            yield return StartCoroutine("Listen");
+            Complete();
         }
-        CoinSpawn.OnClearSpawn?.Invoke();
-    }
-
-    IEnumerator DebugRoutine() {
-        Prompt();
-        yield return StartCoroutine(Listen());
-        Complete();
     }
 
     void Prompt() {
         hasResponded = false;
         isCheckingFare = true;
+        failedEvent = false;
         CalculateFarePaid();
         FareWindow.OnOpen?.Invoke(false);
         Passenger.OnEnterBus?.Invoke();
@@ -94,19 +72,14 @@ public class CheckFare : BusEvent {
     }
 
     IEnumerator Timeout() {
-        timesUp = false;
-        if (isRushHour) {
-            timeTotal = 5f;
-        } else {
-            timeTotal = 7f;
-        }
+        timeTotal = isRushHour ? 5f : 7f;
         timeLeft = timeTotal;
 
         while (timeLeft > 0) {
             timeLeft -= Time.deltaTime;
             yield return null;
         }
-        timesUp = true;
+        failedEvent = true;
 
         CoinSpawn.OnClearSpawn?.Invoke();
         FareWindow.OnClose?.Invoke(false);
@@ -118,21 +91,25 @@ public class CheckFare : BusEvent {
         if (timeoutRoutine != null) {
             StopCoroutine(timeoutRoutine);
         }
-        Debug.Log("Fare Paid: " + farePaid + " " + "Fare currently: " + fare);
-        if (answer) {
-            if (farePaid >= fare) {
-                Rate(timeLeft, timeTotal);
-            } else {
-                Fail();
+
+        if (failedEvent) {
+            Fail();
+        } else {
+            if (answer) {
+                if (farePaid >= fare) {
+                    Rate(timeLeft, timeTotal);
+                } else {
+                    Fail();
+                }
+            } else if (!answer) {
+                if (farePaid >= fare) {
+                    Fail();
+                } else {
+                    Rate(timeLeft, timeTotal);
+                }
+                Passenger.OnLeaveBus?.Invoke();
+                BusStop.OnHide?.Invoke();
             }
-        } else if (!answer) {
-            if (farePaid >= fare) {
-                Fail();
-            } else {
-                Rate(timeLeft, timeTotal);
-            }
-            Passenger.OnLeaveBus?.Invoke();
-            BusStop.OnHide?.Invoke();
         }
 
         FareWindow.OnClose?.Invoke(false);
@@ -140,29 +117,8 @@ public class CheckFare : BusEvent {
         isCheckingFare = false;
     }
 
-    void LoadNextTime() {
-        if (isRushHour) {
-            nextTime = Random.Range(4f, 5f);
-        } else {
-            nextTime = Random.Range(7f, 8f);
-        }
-        Debug.Log("Next Check Fare: " + nextTime);
-    }
-
     IEnumerator Listen() {
-        yield return new WaitUntil(() => {
-            if (hasResponded) {
-                return true;
-            } else if (timesUp) {
-                Fail();
-                return true;
-            }
-            return false;
-        });
-    }
-
-    void OnClick() {
-        hasResponded = true;
+        yield return new WaitUntil(() => hasResponded || failedEvent);
     }
 
     void CalculateFarePaid() {
@@ -196,5 +152,14 @@ public class CheckFare : BusEvent {
 
     void SetFare(float value) {
         fare = value;
+    }
+
+    void LoadNextTime() {
+        if (isRushHour) {
+            nextTime = Random.Range(1f, 2f);
+        } else {
+            nextTime = Random.Range(3f, 5f);
+        }
+        Debug.Log("Next Check Fare: " + nextTime);
     }
 }

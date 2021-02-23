@@ -61,6 +61,7 @@ public class DrivingPrompt : MonoBehaviour {
                 promptRectTransform.localScale = newScale;
                 break;
             case KeyPrompts.ActionName.Stop:
+                promptRectTransform.localScale = promptLocalScaleStart;
                 prompt.sprite = brakeSprites[0];
                 break;
             default:

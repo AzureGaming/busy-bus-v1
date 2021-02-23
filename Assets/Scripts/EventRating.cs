@@ -4,15 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EventRating : MonoBehaviour {
-    public delegate void Fail();
-    public static Fail OnFail;
-    public delegate void Good();
-    public static Good OnGood;
-    public delegate void Great();
-    public static Great OnGreat;
-    public delegate void Awesome();
-    public static Awesome OnAwesome;
-
     public Sprite failSprite;
     public Sprite goodSprite;
     public Sprite greatSprite;
@@ -20,20 +11,6 @@ public class EventRating : MonoBehaviour {
 
     Image image;
     Color startColor;
-
-    private void OnEnable() {
-        OnFail += ShowFail;
-        OnGood += ShowGood;
-        OnGreat += ShowGreat;
-        OnAwesome += ShowAwesome;
-    }
-
-    private void OnDisable() {
-        OnFail -= ShowFail;
-        OnGood -= ShowGood;
-        OnGreat -= ShowGreat;
-        OnAwesome -= ShowAwesome;
-    }
 
     void Awake() {
         image = GetComponent<Image>();
@@ -44,22 +21,22 @@ public class EventRating : MonoBehaviour {
         image.color = Color.clear;
     }
 
-    void ShowFail() {
+    public void ShowFail() {
         image.sprite = failSprite;
         StartCoroutine(Hide());
     }
 
-    void ShowGood() {
+    public void ShowGood() {
         image.sprite = goodSprite;
         StartCoroutine(Hide());
     }
 
-    void ShowGreat() {
+    public void ShowGreat() {
         image.sprite = greatSprite;
         StartCoroutine(Hide());
     }
 
-    void ShowAwesome() {
+    public void ShowAwesome() {
         image.sprite = awesomeSprite;
         StartCoroutine(Hide());
     }
