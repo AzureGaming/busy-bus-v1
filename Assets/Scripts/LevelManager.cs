@@ -10,6 +10,7 @@ public class LevelManager : MonoBehaviour {
 
     public KeyPrompts keyPrompts;
     public CheckFare checkFare;
+    public AudioSource busBG;
 
     readonly int START_HOUR = 6;
     readonly int HOURS_IN_DAY = 12; // 06:00 - 18:00
@@ -34,6 +35,7 @@ public class LevelManager : MonoBehaviour {
     private void OnDisable() {
         OnComplete -= CompleteEvent;
     }
+
 
     private void Start() {
         LoadDay();
@@ -67,6 +69,7 @@ public class LevelManager : MonoBehaviour {
     }
 
     void CompleteDay() {
+        busBG.Stop();
         keyPrompts.Stop();
         checkFare.Stop();
         GameManager.OnShowResults?.Invoke();
@@ -81,6 +84,7 @@ public class LevelManager : MonoBehaviour {
     }
 
     IEnumerator StartDay() {
+        busBG.Play();
         while (timeElapsed <= targetTime) {
             timeElapsed += Time.deltaTime;
             yield return null;

@@ -11,6 +11,8 @@ public class KeyPrompts : BusEvent {
         Forward,
         Stop
     }
+    public AudioSource promptNoise;
+
     KeyCode expectedKey;
     KeyCode[] keyCodes;
     Dictionary<ActionName, KeyCode> keyCodeMap;
@@ -61,6 +63,7 @@ public class KeyPrompts : BusEvent {
         eventFailed = false;
         timeoutRoutine = StartCoroutine(Timeout());
         DrivingPrompt.OnPrompt?.Invoke(actionName, timeTotal);
+        promptNoise.Play();
     }
 
     void Complete() {

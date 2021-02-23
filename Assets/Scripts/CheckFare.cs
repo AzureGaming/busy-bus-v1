@@ -12,6 +12,8 @@ public class CheckFare : BusEvent {
     public Button acceptButton;
     public Button rejectButton;
 
+    public AudioSource[] coinNoises;
+
     Coroutine timeoutRoutine;
     float fare;
     float farePaid;
@@ -61,6 +63,7 @@ public class CheckFare : BusEvent {
     }
 
     void Prompt() {
+        coinNoises[Random.Range(0, coinNoises.Length)].Play();
         hasResponded = false;
         failedEvent = false;
         CalculateFarePaid();
