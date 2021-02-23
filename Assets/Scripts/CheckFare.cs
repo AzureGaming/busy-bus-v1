@@ -11,7 +11,6 @@ public class CheckFare : BusEvent {
     public GameObject civilianPrefab;
     public Button acceptButton;
     public Button rejectButton;
-    public static bool isCheckingFare;
 
     Coroutine timeoutRoutine;
     float fare;
@@ -63,7 +62,6 @@ public class CheckFare : BusEvent {
 
     void Prompt() {
         hasResponded = false;
-        isCheckingFare = true;
         failedEvent = false;
         CalculateFarePaid();
         FareWindow.OnOpen?.Invoke(false);
@@ -107,14 +105,13 @@ public class CheckFare : BusEvent {
                 } else {
                     Rate(timeLeft, timeTotal);
                 }
-                Passenger.OnLeaveBus?.Invoke();
-                BusStop.OnHide?.Invoke();
             }
         }
 
+        Passenger.OnLeaveBus?.Invoke();
+        BusStop.OnHide?.Invoke();
         FareWindow.OnClose?.Invoke(false);
         CoinSpawn.OnClearSpawn?.Invoke();
-        isCheckingFare = false;
     }
 
     IEnumerator Listen() {

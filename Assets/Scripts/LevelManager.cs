@@ -39,10 +39,6 @@ public class LevelManager : MonoBehaviour {
         LoadDay();
     }
 
-    public float GetTimeElapsed() {
-        return timeElapsed;
-    }
-
     public void LoadDay() {
         scoreToday = 0;
         fareRateIndex = 0;
@@ -97,10 +93,6 @@ public class LevelManager : MonoBehaviour {
         timeElapsed = 0;
         currentHour = START_HOUR;
         gameHoursPerSecond = targetTime / totalGameHours;
-        if (GameManager.IS_DEBUG) {
-            Debug.Log("Init Timer");
-            Debug.Log("Target time: " + targetTime + " Game hours per second: " + gameHoursPerSecond);
-        }
     }
 
     IEnumerator UpdateHour() {
@@ -141,7 +133,7 @@ public class LevelManager : MonoBehaviour {
         fareRates = new List<float>();
         fareRateIndex = 0;
         for (int i = 0; i < 4; i++) {
-            float fare = Random.Range(2f, 4f);
+            float fare = Random.Range(1f, 3f);
             fare -= (float)( fare % 0.01 ); // 2 decimal places
             fare = Mathf.Round(fare * 10f) / 10f;
             fareRates.Add(fare);

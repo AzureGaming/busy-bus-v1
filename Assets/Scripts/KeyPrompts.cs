@@ -44,7 +44,6 @@ public class KeyPrompts : BusEvent {
             LoadNextTime();
             yield return new WaitForSeconds(nextTime);
             Prompt();
-            timeoutRoutine = StartCoroutine(Timeout());
             if (expectedKey == KeyCode.Space) {
                 yield return StartCoroutine(ListenForBrake());
                 CompleteBrake();
@@ -60,7 +59,8 @@ public class KeyPrompts : BusEvent {
         ActionName actionName = keyCodeMap.ElementAt(randomIndex).Key;
         expectedKey = keyCodeMap.ElementAt(randomIndex).Value;
         eventFailed = false;
-        DrivingPrompt.OnPrompt?.Invoke(actionName);
+        timeoutRoutine = StartCoroutine(Timeout());
+        DrivingPrompt.OnPrompt?.Invoke(actionName, timeTotal);
     }
 
     void Complete() {
@@ -73,7 +73,6 @@ public class KeyPrompts : BusEvent {
         } else {
             Rate(timeLeft, timeTotal);
         }
-
         DrivingPrompt.OnHide?.Invoke();
     }
 
@@ -132,7 +131,6 @@ public class KeyPrompts : BusEvent {
             timeLeft -= Time.deltaTime;
             yield return null;
         }
-        Debug.Log("event failed");
         eventFailed = true;
     }
 
