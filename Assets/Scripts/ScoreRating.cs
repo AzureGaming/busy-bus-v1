@@ -22,24 +22,32 @@ public class ScoreRating : MonoBehaviour {
 
     void HandleUpdate(float value) {
         stars.ClearStars();
-        while (value - 1 > 0) {
-            value--;
+        if (value >= 5) {
             stars.Render100Star();
-        }
+            stars.Render100Star();
+            stars.Render100Star();
+            stars.Render100Star();
+            stars.Render100Star();
+        } else {
+            while (value - 1 >= 0) {
+                value--;
+                stars.Render100Star();
+            }
 
-        while (value - 0.75f > 0) {
-            value -= 0.75f;
-            stars.Render75Star();
-        }
+            while (value - 0.75f >= 0) {
+                value -= 0.75f;
+                stars.Render75Star();
+            }
 
-        while (value - 0.5f > 0) {
-            value -= 0.5f;
-            stars.Render50Star();
-        }
+            while (value - 0.5f >= 0) {
+                value -= 0.5f;
+                stars.Render50Star();
+            }
 
-        while (value - 0.25f > 0) {
-            value -= 0.25f;
-            stars.Render25Star();
+            while (value - 0.25f >= 0) {
+                value -= 0.25f;
+                stars.Render25Star();
+            }
         }
     }
 }

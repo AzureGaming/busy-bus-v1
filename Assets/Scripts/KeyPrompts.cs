@@ -11,15 +11,17 @@ public class KeyPrompts : BusEvent {
         Forward,
         Stop
     }
+    public AudioSource promptNoise;
+
     KeyCode expectedKey;
     KeyCode[] keyCodes;
     Dictionary<ActionName, KeyCode> keyCodeMap;
-    Coroutine eventRoutine;
     Coroutine timeoutRoutine;
     float nextTime;
-    bool timesUp;
+    bool eventFailed;
     float timeLeft;
     float timeTotal;
+    string eventResponse;
 
     private void Awake() {
         keyCodes = new KeyCode[4] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.Space };
@@ -31,16 +33,11 @@ public class KeyPrompts : BusEvent {
     }
 
     public void Init() {
-        if (GameManager.IS_DEBUG) {
-            eventRoutine = StartCoroutine(DebugRoutine());
-        } else {
-            eventRoutine = StartCoroutine(EventRoutine());
-        }
+        StartCoroutine(EventRoutine());
     }
 
     public void Stop() {
-        StopCoroutine(eventRoutine);
-        StopCoroutine(timeoutRoutine);
+        StopAllCoroutines();
         DrivingPrompt.OnHide?.Invoke();
     }
 
@@ -49,18 +46,9 @@ public class KeyPrompts : BusEvent {
             LoadNextTime();
             yield return new WaitForSeconds(nextTime);
             Prompt();
-            timeoutRoutine = StartCoroutine(Timeout());
             if (expectedKey == KeyCode.Space) {
                 yield return StartCoroutine(ListenForBrake());
-                Trees.OnStop?.Invoke();
-                Buildings.OnStop?.Invoke();
-                RoadLine.OnStop?.Invoke();
-                Complete();
-                yield return new WaitForSeconds(3f);
-                BusStop.OnHide?.Invoke();
-                Trees.OnContinue?.Invoke();
-                Buildings.OnContinue?.Invoke();
-                RoadLine.OnContinue?.Invoke();
+                CompleteBrake();
             } else {
                 yield return StartCoroutine(Listen());
                 Complete();
@@ -72,45 +60,42 @@ public class KeyPrompts : BusEvent {
         int randomIndex = Random.Range(0, keyCodeMap.Count);
         ActionName actionName = keyCodeMap.ElementAt(randomIndex).Key;
         expectedKey = keyCodeMap.ElementAt(randomIndex).Value;
-        if (expectedKey == KeyCode.Space && CheckFare.isCheckingFare) {
-            Prompt();
-        } else {
-            Debug.Log("Prompt" + actionName);
-            DrivingPrompt.OnPrompt?.Invoke(actionName);
-        }
-    }
-
-    void Prompt(int index) {
-        expectedKey = keyCodeMap.ElementAt(index).Value;
-        ActionName actionName = keyCodeMap.ElementAt(index).Key;
-        Debug.Log("Expected Key: " + expectedKey);
-        Debug.Log("Action Name: " + actionName);
-        DrivingPrompt.OnPrompt?.Invoke(actionName);
+        eventFailed = false;
+        timeoutRoutine = StartCoroutine(Timeout());
+        DrivingPrompt.OnPrompt?.Invoke(actionName, timeTotal);
+        promptNoise.Play();
     }
 
     void Complete() {
-        if (expectedKey == KeyCode.Space) {
-            CheckFare.OnQueueCommuters?.Invoke();
-        }
-
         if (timeoutRoutine != null) {
             StopCoroutine(timeoutRoutine);
+        }
+
+        if (eventFailed || eventResponse != expectedKey.ToString().ToLower()) {
+            Fail();
+        } else {
+            Rate(timeLeft, timeTotal);
+        }
+        DrivingPrompt.OnHide?.Invoke();
+    }
+
+    void CompleteBrake() {
+        if (timeoutRoutine != null) {
+            StopCoroutine(timeoutRoutine);
+        }
+
+        if (eventFailed) {
+            Fail();
+        } else {
+            Rate(timeLeft, timeTotal);
         }
         DrivingPrompt.OnHide?.Invoke();
     }
 
     IEnumerator Listen() {
         yield return new WaitUntil(() => {
-            string input = Input.inputString;
-            if (input == expectedKey.ToString().ToLower()) {
-                Rate(timeLeft, timeTotal);
-                return true;
-            }
-            if (input.Length > 0 || timesUp) {
-                Fail();
-                return true;
-            }
-            return false;
+            eventResponse = Input.inputString;
+            return eventResponse.Length > 0 || eventFailed;
         });
     }
 
@@ -118,8 +103,7 @@ public class KeyPrompts : BusEvent {
         int counter = 0;
         int index = 0;
         while (index < 3) {
-            if (timesUp) {
-                Fail();
+            if (eventFailed) {
                 yield break;
             }
             if (counter == 3) {
@@ -132,11 +116,9 @@ public class KeyPrompts : BusEvent {
             }
             yield return null;
         }
-        Rate(timeLeft, timeTotal);
     }
 
     IEnumerator Timeout() {
-        timesUp = false;
         if (expectedKey == KeyCode.Space) {
             timeTotal = 5f;
         } else {
@@ -152,7 +134,7 @@ public class KeyPrompts : BusEvent {
             timeLeft -= Time.deltaTime;
             yield return null;
         }
-        timesUp = true;
+        eventFailed = true;
     }
 
     void LoadNextTime() {
@@ -162,42 +144,5 @@ public class KeyPrompts : BusEvent {
             nextTime = Random.Range(3f, 5f);
         }
         Debug.Log("Next Key Prompt: " + nextTime);
-    }
-
-    IEnumerator DebugRoutine() {
-        for (; ; ) {
-            if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                Prompt(0);
-                yield return null;
-                yield return StartCoroutine(Listen());
-                Complete();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                Prompt(1);
-                yield return null;
-                yield return StartCoroutine(Listen());
-                Complete();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                Prompt(2);
-                yield return null;
-                yield return StartCoroutine(Listen());
-                Complete();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha4)) {
-                Prompt(3);
-                yield return null;
-                yield return StartCoroutine(ListenForBrake());
-                Trees.OnStop?.Invoke();
-                Buildings.OnStop?.Invoke();
-                RoadLine.OnStop?.Invoke();
-                Complete();
-                yield return new WaitForSeconds(3f);
-                Trees.OnContinue?.Invoke();
-                Buildings.OnContinue?.Invoke();
-                RoadLine.OnContinue?.Invoke();
-            }
-            yield return null;
-        }
     }
 }

@@ -8,6 +8,8 @@ public abstract class BusEvent : MonoBehaviour {
     public delegate void RushHourEnd();
     public static RushHourEnd OnRushHourEnd;
 
+    public EventRating eventRating;
+
     protected bool isRushHour;
 
     private void OnEnable() {
@@ -31,22 +33,22 @@ public abstract class BusEvent : MonoBehaviour {
     protected void Rate(float timeLeft, float timeTotal) {
         float ratio = timeLeft / timeTotal;
         if (ratio <= 0) {
-            EventRating.OnFail?.Invoke();
-            LevelManager.OnComplete?.Invoke(-0.25f);
+            eventRating.ShowFail();
+            LevelManager.OnComplete?.Invoke(-1f);
         } else if (ratio > 0 && ratio <= 0.33) {
-            EventRating.OnGood?.Invoke();
+            eventRating.ShowGood();
             LevelManager.OnComplete?.Invoke(0.25f);
         } else if (ratio > 0.33 && ratio <= 0.66) {
-            EventRating.OnGreat?.Invoke();
+            eventRating.ShowGreat();
             LevelManager.OnComplete?.Invoke(0.5f);
         } else if (ratio > 0.66) {
-            EventRating.OnAwesome?.Invoke();
+            eventRating.ShowAwesome();
             LevelManager.OnComplete?.Invoke(1f);
         }
     }
 
     protected void Fail() {
-        EventRating.OnFail?.Invoke();
-        LevelManager.OnComplete?.Invoke(-0.25f);
+        eventRating.ShowFail();
+        LevelManager.OnComplete?.Invoke(-1f);
     }
 }

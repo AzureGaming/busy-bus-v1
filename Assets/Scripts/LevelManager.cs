@@ -10,20 +10,17 @@ public class LevelManager : MonoBehaviour {
 
     public KeyPrompts keyPrompts;
     public CheckFare checkFare;
+    public AudioSource busBG;
 
-    readonly int MAX_RATING = 5;
     readonly int START_HOUR = 6;
     readonly int HOURS_IN_DAY = 12; // 06:00 - 18:00
     readonly int DAY_IN_REAL_MINUTES = 1;
 
-    int misses;
     float scoreToday;
     float targetTime;
     float timeElapsed;
     int currentHour;
     float gameHoursPerSecond;
-    bool isRushHour;
-    int commuterQueue;
     // 0: 6am - 9am
     // 1: 9am - 12pm
     // 2: 12pm - 3pm
@@ -39,28 +36,26 @@ public class LevelManager : MonoBehaviour {
         OnComplete -= CompleteEvent;
     }
 
+
     private void Start() {
         LoadDay();
     }
 
-    public float GetTimeElapsed() {
-        return timeElapsed;
-    }
-
     public void LoadDay() {
-        misses = 0;
         scoreToday = 0;
-        isRushHour = false;
-        commuterQueue = 0;
+        fareRateIndex = 0;
         InitTimer(DAY_IN_REAL_MINUTES, HOURS_IN_DAY);
         LoadFareRates();
         StartCoroutine(StartDay());
         StartCoroutine(RushHour());
         StartCoroutine(UpdateHour());
+
         keyPrompts.Init();
+        checkFare.Init();
         DrivingPrompt.OnHide?.Invoke();
         GameManager.OnShowBusOverlay?.Invoke();
         ScoreRating.OnUpdateScore?.Invoke(scoreToday);
+        CheckFare.OnUpdateFare?.Invoke(fareRates[fareRateIndex]);
         RoadLines.OnInit?.Invoke();
         Buildings.OnInit?.Invoke();
         Trees.OnInit?.Invoke();
@@ -74,6 +69,7 @@ public class LevelManager : MonoBehaviour {
     }
 
     void CompleteDay() {
+        busBG.Stop();
         keyPrompts.Stop();
         checkFare.Stop();
         GameManager.OnShowResults?.Invoke();
@@ -81,10 +77,14 @@ public class LevelManager : MonoBehaviour {
 
     void CompleteEvent(float ratingLevel) {
         scoreToday += ratingLevel;
+        if (scoreToday < 0) {
+            scoreToday = 0;
+        }
         ScoreRating.OnUpdateScore?.Invoke(scoreToday);
     }
 
     IEnumerator StartDay() {
+        busBG.Play();
         while (timeElapsed <= targetTime) {
             timeElapsed += Time.deltaTime;
             yield return null;
@@ -97,10 +97,6 @@ public class LevelManager : MonoBehaviour {
         timeElapsed = 0;
         currentHour = START_HOUR;
         gameHoursPerSecond = targetTime / totalGameHours;
-        if (GameManager.IS_DEBUG) {
-            Debug.Log("Init Timer");
-            Debug.Log("Target time: " + targetTime + " Game hours per second: " + gameHoursPerSecond);
-        }
     }
 
     IEnumerator UpdateHour() {
@@ -110,9 +106,10 @@ public class LevelManager : MonoBehaviour {
             if (hourCounter == 3) {
                 fareRateIndex++;
                 hourCounter = 0;
+                CheckFare.OnUpdateFare?.Invoke(fareRates[fareRateIndex]);
             }
             OnHourChange?.Invoke(currentHour);
-            FarePoster.OnHighlightFare?.Invoke(fareRateIndex);
+            //FarePoster.OnHighlightFare?.Invoke(fareRateIndex);
             currentHour++;
             hourCounter++;
             yield return new WaitForSeconds(gameHoursPerSecond);
@@ -140,7 +137,7 @@ public class LevelManager : MonoBehaviour {
         fareRates = new List<float>();
         fareRateIndex = 0;
         for (int i = 0; i < 4; i++) {
-            float fare = Random.Range(2f, 4f);
+            float fare = Random.Range(1f, 3f);
             fare -= (float)( fare % 0.01 ); // 2 decimal places
             fare = Mathf.Round(fare * 10f) / 10f;
             fareRates.Add(fare);

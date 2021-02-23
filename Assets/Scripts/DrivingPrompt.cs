@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class DrivingPrompt : MonoBehaviour {
-    public delegate void Prompt(KeyPrompts.ActionName actionName);
+    public delegate void Prompt(KeyPrompts.ActionName actionName, float totalTime);
     public static Prompt OnPrompt;
     public delegate void Hide();
     public static Hide OnHide;
@@ -18,6 +18,7 @@ public class DrivingPrompt : MonoBehaviour {
 
     CanvasGroup canvasGroup;
     Vector3 promptLocalScaleStart;
+    Coroutine invisibleRoutine;
 
     private void Awake() {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -40,10 +41,28 @@ public class DrivingPrompt : MonoBehaviour {
     }
 
     void Invisible() {
+        if (invisibleRoutine != null) {
+            StopCoroutine(invisibleRoutine);
+        }
         canvasGroup.alpha = 0;
     }
 
-    void Show(KeyPrompts.ActionName actionName) {
+    IEnumerator InvisibleRoutine(float totalTime) {
+        //float timeElapsed = 0f;
+        //float startingAlpha = canvasGroup.alpha;
+
+        //while (timeElapsed < totalTime) {
+        //    float alpha;
+        //    alpha = Mathf.Lerp(startingAlpha, 0, ( timeElapsed / totalTime ));
+        //    timeElapsed += Time.deltaTime;
+        //    canvasGroup.alpha = alpha;
+        //    yield return null;
+        //}
+        yield return new WaitForSeconds(totalTime);
+        canvasGroup.alpha = 0;
+    }
+
+    void Show(KeyPrompts.ActionName actionName, float totalTime) {
         canvasGroup.alpha = 1;
         RectTransform promptRectTransform = prompt.GetComponent<RectTransform>();
 
@@ -61,14 +80,16 @@ public class DrivingPrompt : MonoBehaviour {
                 promptRectTransform.localScale = newScale;
                 break;
             case KeyPrompts.ActionName.Stop:
+                promptRectTransform.localScale = promptLocalScaleStart;
                 prompt.sprite = brakeSprites[0];
                 break;
             default:
                 break;
         }
+        invisibleRoutine = StartCoroutine(InvisibleRoutine(totalTime));
     }
 
     void ShowBrake(int index) {
         prompt.sprite = brakeSprites[index];
     }
-} 
+}
