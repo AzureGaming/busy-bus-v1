@@ -52,6 +52,7 @@ public class LevelManager : MonoBehaviour {
         scoreToday = 0;
         isRushHour = false;
         commuterQueue = 0;
+        fareRateIndex = 0;
         InitTimer(DAY_IN_REAL_MINUTES, HOURS_IN_DAY);
         LoadFareRates();
         StartCoroutine(StartDay());
@@ -61,6 +62,7 @@ public class LevelManager : MonoBehaviour {
         DrivingPrompt.OnHide?.Invoke();
         GameManager.OnShowBusOverlay?.Invoke();
         ScoreRating.OnUpdateScore?.Invoke(scoreToday);
+        CheckFare.OnUpdateFare?.Invoke(fareRates[fareRateIndex]);
         RoadLines.OnInit?.Invoke();
         Buildings.OnInit?.Invoke();
         Trees.OnInit?.Invoke();
@@ -110,6 +112,7 @@ public class LevelManager : MonoBehaviour {
             if (hourCounter == 3) {
                 fareRateIndex++;
                 hourCounter = 0;
+                CheckFare.OnUpdateFare?.Invoke(fareRates[fareRateIndex]);
             }
             OnHourChange?.Invoke(currentHour);
             FarePoster.OnHighlightFare?.Invoke(fareRateIndex);

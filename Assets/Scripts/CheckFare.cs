@@ -50,8 +50,12 @@ public class CheckFare : BusEvent {
     }
 
     public void Stop() {
-        StopCoroutine(eventRoutine);
-        StopCoroutine(timeoutRoutine);
+        if (eventRoutine != null) {
+            StopCoroutine(eventRoutine);
+        }
+        if (timeoutRoutine != null) {
+            StopCoroutine(timeoutRoutine);
+        }
         CoinSpawn.OnClearSpawn?.Invoke();
     }
 
@@ -64,14 +68,14 @@ public class CheckFare : BusEvent {
     }
 
     IEnumerator EventRoutine() {
-        for (; ; ) {
-            Prompt();
-            timeoutRoutine = StartCoroutine(Timeout());
-            yield return StartCoroutine(Listen());
-            Complete();
-            LoadNextTime();
-            yield return new WaitForSeconds(nextTime);
+        Prompt();
+        timeoutRoutine = StartCoroutine(Timeout());
+        yield return StartCoroutine(Listen());
+        Complete();
+        if (timeoutRoutine != null) {
+            StopCoroutine(timeoutRoutine);
         }
+        CoinSpawn.OnClearSpawn?.Invoke();
     }
 
     IEnumerator DebugRoutine() {
@@ -114,7 +118,7 @@ public class CheckFare : BusEvent {
         if (timeoutRoutine != null) {
             StopCoroutine(timeoutRoutine);
         }
-        Debug.Log("Answer: " + answer);
+        Debug.Log("Fare Paid: " + farePaid + " " + "Fare currently: " + fare);
         if (answer) {
             if (farePaid >= fare) {
                 Rate(timeLeft, timeTotal);
@@ -130,7 +134,7 @@ public class CheckFare : BusEvent {
             Passenger.OnLeaveBus?.Invoke();
             BusStop.OnHide?.Invoke();
         }
-        
+
         FareWindow.OnClose?.Invoke(false);
         CoinSpawn.OnClearSpawn?.Invoke();
         isCheckingFare = false;
