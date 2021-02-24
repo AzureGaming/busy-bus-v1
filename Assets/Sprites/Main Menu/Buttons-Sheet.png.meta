@@ -1,0 +1,331 @@
+fileFormatVersion: 2
+guid: 89adcc41a3dcdd247a76f08dda537701
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5677451655352235763
+    second: Buttons-Sheet_0
+  - first:
+      213: -1710845047738627229
+    second: Buttons-Sheet_1
+  - first:
+      213: -5044596713200232319
+    second: Buttons-Sheet_2
+  - first:
+      213: 8231418172065189440
+    second: Buttons-Sheet_3
+  - first:
+      213: 4322673043527013044
+    second: Buttons-Sheet_4
+  - first:
+      213: 4666077818931749175
+    second: Buttons-Sheet_5
+  - first:
+      213: -813905644948478668
+    second: Buttons-Sheet_6
+  - first:
+      213: 7599432968757225573
+    second: Buttons-Sheet_7
+  - first:
+      213: 8418759625490777032
+    second: Buttons-Sheet_8
+  - first:
+      213: 3388378803721370004
+    second: Buttons-Sheet_9
+  - first:
+      213: -1036592771771395080
+    second: Buttons-Sheet_10
+  - first:
+      213: -6598036126873212134
+    second: Buttons-Sheet_11
+  - first:
+      213: -23530689285739627
+    second: Buttons-Sheet_12
+  - first:
+      213: -214828719786938277
+    second: Buttons-Sheet_13
+  - first:
+      213: 8414397559482299720
+    second: Buttons-Sheet_14
+  - first:
+      213: -1513487178384027574
+    second: Buttons-Sheet_15
+  - first:
+      213: 3581737191522520629
+    second: Buttons-Sheet_16
+  - first:
+      213: 132872632785192940
+    second: Buttons-Sheet_17
+  - first:
+      213: -4918970044191658307
+    second: Buttons-Sheet_18
+  - first:
+      213: -1114545440817974790
+    second: Buttons-Sheet_19
+  - first:
+      213: -3565591657601174455
+    second: Buttons-Sheet_20
+  - first:
+      213: -1190960631087886438
+    second: Buttons-Sheet_21
+  - first:
+      213: 4501483739778376117
+    second: Buttons-Sheet_22
+  - first:
+      213: -3462734588505133942
+    second: Buttons-Sheet_23
+  - first:
+      213: 802395339181510514
+    second: Buttons-Sheet_24
+  - first:
+      213: 7569135077593512872
+    second: Buttons-Sheet_25
+  - first:
+      213: 1975628610477847094
+    second: Buttons-Sheet_26
+  - first:
+      213: 7852300068874702875
+    second: Buttons-Sheet_27
+  - first:
+      213: -1742672584519156021
+    second: Buttons-Sheet_28
+  - first:
+      213: 9084608863221814894
+    second: Buttons-Sheet_29
+  - first:
+      213: 571775072475250586
+    second: Buttons-Sheet_30
+  - first:
+      213: 7081399837352852735
+    second: Buttons-Sheet_31
+  - first:
+      213: -1815289208032044910
+    second: Buttons-Sheet_32
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Buttons-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 115
+        width: 110
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d09c645ccc3a531b0800000000000000
+      internalID: -5677451655352235763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Buttons-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 92
+        width: 110
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36b8dc75e7bd148e0800000000000000
+      internalID: -1710845047738627229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Buttons-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 69
+        width: 110
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 188d89a440efdf9b0800000000000000
+      internalID: -5044596713200232319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Buttons-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 46
+        width: 110
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04e04af273fdb3270800000000000000
+      internalID: 8231418172065189440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Buttons-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 23
+        width: 110
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b295970b383dfb30800000000000000
+      internalID: 4322673043527013044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Buttons-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 110
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 731a1cbed0d31c040800000000000000
+      internalID: 4666077818931749175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
