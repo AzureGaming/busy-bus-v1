@@ -52,6 +52,7 @@ public class LevelManager : MonoBehaviour {
 
         keyPrompts.Init();
         checkFare.Init();
+        BusEvent.OnNewDay?.Invoke();
         DrivingPrompt.OnHide?.Invoke();
         GameManager.OnShowBusOverlay?.Invoke();
         ScoreRating.OnUpdateScore?.Invoke(scoreToday);
