@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Results : MonoBehaviour {
     public GameObject oldStars;
@@ -21,6 +22,14 @@ public class Results : MonoBehaviour {
         RenderFareChecks();
         RenderDrivingChecks();
         RenderDollarsEarned();
+    }
+
+    public void TryAgain() {
+        SceneManager.LoadScene("Bus");
+    }
+
+    public void MainMenu() {
+        SceneManager.LoadScene("Main Menu");
     }
 
     void RenderStars() {
