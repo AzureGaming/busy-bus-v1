@@ -94,19 +94,19 @@ public class CheckFare : BusEvent {
         }
 
         if (failedEvent) {
-            Fail();
+            Fail(Type.Fare);
         } else {
             if (answer) {
                 if (farePaid >= fare) {
-                    Rate(timeLeft, timeTotal);
+                    Rate(timeLeft, timeTotal, Type.Fare);
                 } else {
-                    Fail();
+                    Fail(Type.Fare);
                 }
             } else if (!answer) {
                 if (farePaid >= fare) {
-                    Fail();
+                    Fail(Type.Fare);
                 } else {
-                    Rate(timeLeft, timeTotal);
+                    Rate(timeLeft, timeTotal, Type.Fare);
                 }
             }
         }

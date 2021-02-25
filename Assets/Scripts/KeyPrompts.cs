@@ -72,9 +72,9 @@ public class KeyPrompts : BusEvent {
         }
 
         if (eventFailed || eventResponse != expectedKey.ToString().ToLower()) {
-            Fail();
+            Fail(Type.Driving);
         } else {
-            Rate(timeLeft, timeTotal);
+            Rate(timeLeft, timeTotal, Type.Driving);
         }
         DrivingPrompt.OnHide?.Invoke();
     }
@@ -85,9 +85,9 @@ public class KeyPrompts : BusEvent {
         }
 
         if (eventFailed) {
-            Fail();
+            Fail(Type.Driving);
         } else {
-            Rate(timeLeft, timeTotal);
+            Rate(timeLeft, timeTotal, Type.Driving);
         }
         DrivingPrompt.OnHide?.Invoke();
     }
